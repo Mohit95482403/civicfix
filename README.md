@@ -85,7 +85,7 @@ civicfix/
 | :-: | :--- | :--- | :-: |
 | **Day 1** | **Project Requirements & Architecture** | Complete SRS, Architecture, Database Plan, API Plan, Roles, Security Plan, and Repository Structure. | **COMPLETED** |
 | **Day 2** | **UI/UX Design & Design System** | Design system tokens, screen inventory (41 screens), user flows, wireframes, WCAG 2.2 AA accessibility, responsive rules, and interactive prototype. | **COMPLETED** |
-| **Day 3** | **Project Setup & Environment Tooling** | Workspace initialization, Flutter project creation, React Vite setups, Node/Express scaffolding, ESLint, Git hooks. | Upcoming |
+| **Day 3** | **Project Setup & Environment Tooling** | Multi-tier setup: Flutter (Riverpod, GoRouter, Dio), React + Vite staff & admin portals (Tailwind CSS, TS), Node/Express API (TypeScript, Zod, Helmet, CORS), and master documentation. | **COMPLETED** |
 | **Day 4** | **Supabase Project & PostgreSQL Schema** | Supabase project creation, 14-table schema migration execution, constraints, indexes, and initial category seeds. | Upcoming |
 | **Day 5** | **Backend Foundation & Database Security** | Express API scaffolding, Supabase client initialization, RLS policies, error middleware, and health endpoints. | Upcoming |
 | **Day 6** | **Authentication & Authorization** | Supabase Auth integration, JWT verification middleware, RBAC guards, citizen register/login, staff provisioning. | Upcoming |
@@ -108,7 +108,7 @@ civicfix/
 
 ## 5. Master Documentation Index
 
-All architectural and engineering specifications are organized within the `docs/` directory:
+All architectural, system, and development specifications are organized within the `docs/` directory:
 
 ### Architecture & Engineering (Day 1)
 1. **[Software Requirements Specification (SRS.md)](docs/SRS.md):** Complete functional modules, MoSCoW prioritization, problem statements, and non-functional requirements.
@@ -127,27 +127,33 @@ All architectural and engineering specifications are organized within the `docs/
 12. **[Accessibility Compliance Standards (ACCESSIBILITY_GUIDELINES.md)](docs/ACCESSIBILITY_GUIDELINES.md):** WCAG 2.2 Level AA compliance, 4.5:1 minimum contrast, ARIA landmarks, and 44x44px touch targets.
 13. **[Design Decisions & Assumptions (DESIGN_DECISIONS.md)](docs/DESIGN_DECISIONS.md):** Rationale for color, typography, lifecycle states, resolved assumptions, and Day 3 implementation handoff.
 
+### Development Environment & Engineering Tooling (Day 3)
+14. **[Development Setup Guide (DEVELOPMENT_SETUP.md)](docs/DEVELOPMENT_SETUP.md):** Prerequisite tools, local ports, multi-tier run scripts, and troubleshooting.
+15. **[Environment Variables Specification (ENVIRONMENT_VARIABLES.md)](docs/ENVIRONMENT_VARIABLES.md):** Variable inventory across all 4 applications, secret isolation rules, and security boundaries.
+16. **[Supabase Setup & Architecture (SUPABASE_SETUP.md)](docs/SUPABASE_SETUP.md):** Step-by-step Supabase guide, credential management, private storage buckets, and RLS strategy.
+17. **[API Development Guide (API_DEVELOPMENT.md)](docs/API_DEVELOPMENT.md):** Express conventions, health endpoint, error responses, cURL/Postman testing, and route module guide.
+18. **[Project Structure Reference (PROJECT_STRUCTURE.md)](docs/PROJECT_STRUCTURE.md):** Master repository breakdown detailing each folder's role and purpose.
+
 ---
 
-## 6. Interactive Design Prototype (`design-prototype/`)
+## 6. Applications & Workspace Layout
 
-A live, fully functional React + Vite interactive prototype demonstrating the design system and workflows:
-* **Citizen Mobile App Experience:** Smartphone frame simulator with nearby feed, category filters, multi-step report wizard with photo upload & GPS tagging simulation.
-* **Field Staff Portal:** Assigned task queue with SLA breach warnings and proof-of-work resolution dialog.
-* **City Admin Dashboard:** Real-time civic metrics, triage table, staff dispatch modal, department workload matrix, and audit log stream.
-* **Design Token Explorer:** Click-to-copy color palettes, typography scale, and 10-state badge matrix.
-
-To launch the prototype:
-```bash
-cd design-prototype
-npm install
-npm run dev
+```
+civicfix/
+├── mobile/                     # Flutter citizen app (Riverpod 3, GoRouter 18, Dio 5)
+├── staff-portal/               # React 19 + Vite 6 staff portal (Tailwind CSS, TS)
+├── admin-portal/               # React 19 + Vite 6 admin portal (Tailwind CSS, TS)
+├── backend/                    # Node 20+ Express REST API (TypeScript 5, Zod, Helmet)
+├── database/                   # Migrations and seed scripts (Day 4 execution)
+├── design-prototype/           # Day 2 interactive prototype (React 19 + Vite)
+├── docs/                       # 18 master architecture & engineering specifications
+└── package.json                # Root orchestration scripts
 ```
 
 ---
 
 ## 7. Current Status & Next Steps
 
-* **Current Milestone:** **Day 2 Complete** (UI/UX Design System, Screen Architecture & Interactive Prototypes).
-* **Next Milestone:** **Day 3: Project Setup & Environment Tooling** (Workspace initialization, Flutter & React Vite setups, Node/Express scaffolding, Git hooks).
+* **Current Milestone:** **Day 3 Complete** (Development Environment Setup & Multi-Tier Project Foundation).
+* **Next Milestone:** **Day 4: Supabase Project & PostgreSQL Schema** (PostgreSQL 15+ initialization, 14-table migration execution, PostGIS extension, and category seed data).
 

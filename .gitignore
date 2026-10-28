@@ -21,6 +21,9 @@ out/
 *.key
 service-account*.json
 supabase/.temp/
+# Do not ignore example environment templates
+!.env.example
+!**/.env.example
 
 # Flutter & Dart
 .dart_tool/
@@ -29,18 +32,17 @@ build/
 ios/.symlinks/
 ios/Pods/
 ios/Podfile.lock
-ios/.symlinks/
 android/app/debug/
 android/app/profile/
 android/app/release/
 android/.gradle/
 android/captures/
-android/gradlew
-android/gradlew.bat
 android/local.properties
 android/**/generated/
 *.keystore
 *.jks
+.flutter-plugins
+.flutter-plugins-dependencies
 
 # IDE & Editors
 .vscode/
