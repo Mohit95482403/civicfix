@@ -84,7 +84,7 @@ civicfix/
 | Day | Milestone Focus | Deliverables & Scope | Status |
 | :-: | :--- | :--- | :-: |
 | **Day 1** | **Project Requirements & Architecture** | Complete SRS, Architecture, Database Plan, API Plan, Roles, Security Plan, and Repository Structure. | **COMPLETED** |
-| **Day 2** | **UI/UX Design & Design System** | Wireframes, component specifications, color palettes, mobile and web design tokens. | Upcoming |
+| **Day 2** | **UI/UX Design & Design System** | Design system tokens, screen inventory (41 screens), user flows, wireframes, WCAG 2.2 AA accessibility, responsive rules, and interactive prototype. | **COMPLETED** |
 | **Day 3** | **Project Setup & Environment Tooling** | Workspace initialization, Flutter project creation, React Vite setups, Node/Express scaffolding, ESLint, Git hooks. | Upcoming |
 | **Day 4** | **Supabase Project & PostgreSQL Schema** | Supabase project creation, 14-table schema migration execution, constraints, indexes, and initial category seeds. | Upcoming |
 | **Day 5** | **Backend Foundation & Database Security** | Express API scaffolding, Supabase client initialization, RLS policies, error middleware, and health endpoints. | Upcoming |
@@ -108,8 +108,9 @@ civicfix/
 
 ## 5. Master Documentation Index
 
-All technical specifications are organized within the `docs/` directory:
+All architectural and engineering specifications are organized within the `docs/` directory:
 
+### Architecture & Engineering (Day 1)
 1. **[Software Requirements Specification (SRS.md)](docs/SRS.md):** Complete functional modules, MoSCoW prioritization, problem statements, and non-functional requirements.
 2. **[System Architecture Specification (ARCHITECTURE.md)](docs/ARCHITECTURE.md):** Architectural diagrams, component boundaries, end-to-end data flows, and tech stack trade-offs.
 3. **[Database Architecture Plan (DATABASE_PLAN.md)](docs/DATABASE_PLAN.md):** Detailed relational blueprint of 14 tables, foreign keys, organization scoping, storage buckets, and performance indexes.
@@ -117,9 +118,36 @@ All technical specifications are organized within the `docs/` directory:
 5. **[User Roles & Permissions (USER_ROLES.md)](docs/USER_ROLES.md):** Comprehensive CRUD permissions matrix for 5 roles and anti-privilege escalation architecture.
 6. **[Security & Privacy Plan (SECURITY_PLAN.md)](docs/SECURITY_PLAN.md):** Defense-in-depth security, RLS strategy, secret isolation, rate limiting, and India DPDP Act compliance.
 
+### UI/UX Design System & Screen Architecture (Day 2)
+7. **[Design System Specification (DESIGN_SYSTEM.md)](docs/DESIGN_SYSTEM.md):** Color tokens (Civic Teal, Warm Gold), typography scale, 10-state badge rules, spacing, and mobile/web touch target standards.
+8. **[Complete Screen Inventory (SCREEN_INVENTORY.md)](docs/SCREEN_INVENTORY.md):** 41 documented screens across Citizen Mobile (16), Staff Portal (12), and Admin Dashboard (13).
+9. **[Detailed User Flows (USER_FLOWS.md)](docs/USER_FLOWS.md):** 10 critical end-to-end workflows including complaint submission, triage dispatch, proof-of-work resolution, and feedback closure.
+10. **[Screen Wireframe Descriptions (WIREFRAMES.md)](docs/WIREFRAMES.md):** Spatial zoning, visual hierarchies, and component layouts for every core screen.
+11. **[Responsive Design Guidelines (RESPONSIVE_GUIDELINES.md)](docs/RESPONSIVE_GUIDELINES.md):** Breakpoint standards, navigation adapters, fluid data tables, and mobile-first ergonomics.
+12. **[Accessibility Compliance Standards (ACCESSIBILITY_GUIDELINES.md)](docs/ACCESSIBILITY_GUIDELINES.md):** WCAG 2.2 Level AA compliance, 4.5:1 minimum contrast, ARIA landmarks, and 44x44px touch targets.
+13. **[Design Decisions & Assumptions (DESIGN_DECISIONS.md)](docs/DESIGN_DECISIONS.md):** Rationale for color, typography, lifecycle states, resolved assumptions, and Day 3 implementation handoff.
+
 ---
 
-## 6. Current Status & Next Steps
+## 6. Interactive Design Prototype (`design-prototype/`)
 
-* **Current Milestone:** **Day 1 Complete** (Architecture, Requirements Engineering & Database Planning).
-* **Next Milestone:** **Day 2: UI/UX Design System, Screen Wireframes & Component Architecture**.
+A live, fully functional React + Vite interactive prototype demonstrating the design system and workflows:
+* **Citizen Mobile App Experience:** Smartphone frame simulator with nearby feed, category filters, multi-step report wizard with photo upload & GPS tagging simulation.
+* **Field Staff Portal:** Assigned task queue with SLA breach warnings and proof-of-work resolution dialog.
+* **City Admin Dashboard:** Real-time civic metrics, triage table, staff dispatch modal, department workload matrix, and audit log stream.
+* **Design Token Explorer:** Click-to-copy color palettes, typography scale, and 10-state badge matrix.
+
+To launch the prototype:
+```bash
+cd design-prototype
+npm install
+npm run dev
+```
+
+---
+
+## 7. Current Status & Next Steps
+
+* **Current Milestone:** **Day 2 Complete** (UI/UX Design System, Screen Architecture & Interactive Prototypes).
+* **Next Milestone:** **Day 3: Project Setup & Environment Tooling** (Workspace initialization, Flutter & React Vite setups, Node/Express scaffolding, Git hooks).
+
