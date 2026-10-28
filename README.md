@@ -87,7 +87,7 @@ civicfix/
 | **Day 2** | **UI/UX Design & Design System** | Design system tokens, screen inventory (41 screens), user flows, wireframes, WCAG 2.2 AA accessibility, responsive rules, and interactive prototype. | **COMPLETED** |
 | **Day 3** | **Project Setup & Environment Tooling** | Multi-tier setup: Flutter (Riverpod, GoRouter, Dio), React + Vite staff & admin portals (Tailwind CSS, TS), Node/Express API (TypeScript, Zod, Helmet, CORS), and master documentation. | **COMPLETED** |
 | **Day 4** | **Supabase Project & PostgreSQL Schema** | Production PostgreSQL schema, 9 ordered migrations, 14 tables, custom domain ENUMs, single active assignee constraint, RLS policies across all tables, seed data, and verification scripts. | **COMPLETED** |
-| **Day 5** | **Backend Foundation & Database Security** | Express API scaffolding, Supabase client initialization, RLS policies, error middleware, and health endpoints. | Upcoming |
+| **Day 5** | **Backend Foundation & Database Security** | Express REST API gateway, Supabase Auth token verification, RBAC & multi-tenant authorization middleware, Zod request validation, standardized API responses, structured logging with redaction, rate limiting, and 30 automated Vitest tests. | **COMPLETED** |
 | **Day 6** | **Authentication & Authorization** | Supabase Auth integration, JWT verification middleware, RBAC guards, citizen register/login, staff provisioning. | Upcoming |
 | **Day 7** | **Flutter Foundation & Citizen App Shell** | Riverpod state foundation, GoRouter navigation, design system implementation, auth screen flows. | Upcoming |
 | **Day 8** | **Complaint Submission Pipeline** | Mobile complaint wizard, camera photo capture, image compression, presigned storage upload, GPS tagging. | Upcoming |
@@ -141,6 +141,12 @@ All architectural, system, and development specifications are organized within t
 22. **[Database Migrations Guide (DATABASE_MIGRATIONS.md)](docs/DATABASE_MIGRATIONS.md):** Migration naming standards, execution sequence, CLI / Dashboard execution, and rollback strategies.
 23. **[Database Testing & Verification (DATABASE_TESTING.md)](docs/DATABASE_TESTING.md):** Data integrity test cases, security boundary test scenarios, static analysis findings, and verification script instructions.
 
+### Backend Architecture, Security & Authentication (Day 5)
+24. **[Authentication Specification (AUTHENTICATION.md)](docs/AUTHENTICATION.md):** Supabase Auth JWT verification, Bearer scheme extraction, anti-spoofing guarantees, and session lifecycle.
+25. **[Authorization Specification (AUTHORIZATION.md)](docs/AUTHORIZATION.md):** Role hierarchy, multi-tenant organization isolation guards, and internal notes shielding.
+26. **[API Response & Error Conventions (API_ERROR_CONVENTIONS.md)](docs/API_ERROR_CONVENTIONS.md):** Standard JSON envelopes, HTTP status codes, and Request ID tracing.
+27. **[Backend Security & Hardening (BACKEND_SECURITY.md)](docs/BACKEND_SECURITY.md):** Defense-in-depth, Helmet, CORS allowlisting, rate limiting, and dual database access patterns.
+
 ---
 
 ## 6. Applications & Workspace Layout
@@ -150,13 +156,15 @@ civicfix/
 ├── mobile/                     # Flutter citizen app (Riverpod 3, GoRouter 18, Dio 5)
 ├── staff-portal/               # React 19 + Vite 6 staff portal (Tailwind CSS, TS)
 ├── admin-portal/               # React 19 + Vite 6 admin portal (Tailwind CSS, TS)
-├── backend/                    # Node 20+ Express REST API (TypeScript 5, Zod, Helmet)
+├── backend/                    # Node 20+ Express REST API (TypeScript 5, Supabase Auth, Zod)
+│   ├── src/                    # Controllers, middleware, routes, services, validators, utils
+│   └── tests/                  # 30 automated Vitest unit & integration tests
 ├── database/                   # Migrations, seed scripts, and verification tests
 │   ├── migrations/             # 9 ordered PostgreSQL DDL scripts (001 to 009)
 │   ├── seeds/                  # Pilot municipal seeds (BBMP, PMC) and sample tickets
 │   └── tests/                  # Executable schema verification script
 ├── design-prototype/           # Day 2 interactive prototype (React 19 + Vite)
-├── docs/                       # 23 master architecture & engineering specifications
+├── docs/                       # 27 master architecture & engineering specifications
 └── package.json                # Root orchestration scripts
 ```
 
@@ -164,7 +172,8 @@ civicfix/
 
 ## 7. Current Status & Next Steps
 
-* **Current Milestone:** **Day 4 Complete** (Production-Minded Database Architecture, PostgreSQL Schema, Migrations, RLS & Seed Data).
-* **Next Milestone:** **Day 5: Backend Foundation, Authentication Boundaries, Authorization Middleware, and Secure API Architecture**.
+* **Current Milestone:** **Day 5 Complete** (Secure Node.js + Express + TypeScript Backend, Supabase Auth, Authorization Middleware & API Foundation).
+* **Next Milestone:** **Day 6: Authentication Flows and Secure Account Management**.
+
 
 
