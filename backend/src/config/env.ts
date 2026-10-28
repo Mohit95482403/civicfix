@@ -15,7 +15,7 @@ const envSchema = z.object({
     }),
   FRONTEND_ALLOWED_ORIGINS: z
     .string()
-    .default('http://localhost:5173,http://localhost:5174,http://localhost:3000')
+    .default('http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000')
     .transform((val) => val.split(',').map((origin) => origin.trim())),
   // Optional for Day 3 so health check runs without requiring an active external Supabase account today
   SUPABASE_URL: z.string().url().optional(),
