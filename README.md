@@ -86,7 +86,7 @@ civicfix/
 | **Day 1** | **Project Requirements & Architecture** | Complete SRS, Architecture, Database Plan, API Plan, Roles, Security Plan, and Repository Structure. | **COMPLETED** |
 | **Day 2** | **UI/UX Design & Design System** | Design system tokens, screen inventory (41 screens), user flows, wireframes, WCAG 2.2 AA accessibility, responsive rules, and interactive prototype. | **COMPLETED** |
 | **Day 3** | **Project Setup & Environment Tooling** | Multi-tier setup: Flutter (Riverpod, GoRouter, Dio), React + Vite staff & admin portals (Tailwind CSS, TS), Node/Express API (TypeScript, Zod, Helmet, CORS), and master documentation. | **COMPLETED** |
-| **Day 4** | **Supabase Project & PostgreSQL Schema** | Supabase project creation, 14-table schema migration execution, constraints, indexes, and initial category seeds. | Upcoming |
+| **Day 4** | **Supabase Project & PostgreSQL Schema** | Production PostgreSQL schema, 9 ordered migrations, 14 tables, custom domain ENUMs, single active assignee constraint, RLS policies across all tables, seed data, and verification scripts. | **COMPLETED** |
 | **Day 5** | **Backend Foundation & Database Security** | Express API scaffolding, Supabase client initialization, RLS policies, error middleware, and health endpoints. | Upcoming |
 | **Day 6** | **Authentication & Authorization** | Supabase Auth integration, JWT verification middleware, RBAC guards, citizen register/login, staff provisioning. | Upcoming |
 | **Day 7** | **Flutter Foundation & Citizen App Shell** | Riverpod state foundation, GoRouter navigation, design system implementation, auth screen flows. | Upcoming |
@@ -113,7 +113,7 @@ All architectural, system, and development specifications are organized within t
 ### Architecture & Engineering (Day 1)
 1. **[Software Requirements Specification (SRS.md)](docs/SRS.md):** Complete functional modules, MoSCoW prioritization, problem statements, and non-functional requirements.
 2. **[System Architecture Specification (ARCHITECTURE.md)](docs/ARCHITECTURE.md):** Architectural diagrams, component boundaries, end-to-end data flows, and tech stack trade-offs.
-3. **[Database Architecture Plan (DATABASE_PLAN.md)](docs/DATABASE_PLAN.md):** Detailed relational blueprint of 14 tables, foreign keys, organization scoping, storage buckets, and performance indexes.
+3. **[Database Architecture Plan (DATABASE_PLAN.md)](docs/DATABASE_PLAN.md):** Relational blueprint of 14 tables, foreign keys, organization scoping, storage buckets, and performance indexes.
 4. **[REST API Specification (API_PLAN.md)](docs/API_PLAN.md):** Full REST endpoint inventory across Auth, Complaints, Workflow, and Administration with request/response schemas.
 5. **[User Roles & Permissions (USER_ROLES.md)](docs/USER_ROLES.md):** Comprehensive CRUD permissions matrix for 5 roles and anti-privilege escalation architecture.
 6. **[Security & Privacy Plan (SECURITY_PLAN.md)](docs/SECURITY_PLAN.md):** Defense-in-depth security, RLS strategy, secret isolation, rate limiting, and India DPDP Act compliance.
@@ -134,6 +134,13 @@ All architectural, system, and development specifications are organized within t
 17. **[API Development Guide (API_DEVELOPMENT.md)](docs/API_DEVELOPMENT.md):** Express conventions, health endpoint, error responses, cURL/Postman testing, and route module guide.
 18. **[Project Structure Reference (PROJECT_STRUCTURE.md)](docs/PROJECT_STRUCTURE.md):** Master repository breakdown detailing each folder's role and purpose.
 
+### Database Architecture, Migrations & RLS (Day 4)
+19. **[Database Schema Specification (DATABASE_SCHEMA.md)](docs/DATABASE_SCHEMA.md):** Table-by-table schema, column types, check constraints, default values, and index definitions.
+20. **[Database Relationships & ER Model (DATABASE_RELATIONSHIPS.md)](docs/DATABASE_RELATIONSHIPS.md):** Mermaid ER diagram, foreign key deletion policies (`RESTRICT` vs `CASCADE`), and cardinality rules.
+21. **[Row Level Security Policies (RLS_POLICIES.md)](docs/RLS_POLICIES.md):** Table-by-table RLS matrix, security-definer helper functions, internal notes shielding, and audit immutability.
+22. **[Database Migrations Guide (DATABASE_MIGRATIONS.md)](docs/DATABASE_MIGRATIONS.md):** Migration naming standards, execution sequence, CLI / Dashboard execution, and rollback strategies.
+23. **[Database Testing & Verification (DATABASE_TESTING.md)](docs/DATABASE_TESTING.md):** Data integrity test cases, security boundary test scenarios, static analysis findings, and verification script instructions.
+
 ---
 
 ## 6. Applications & Workspace Layout
@@ -144,9 +151,12 @@ civicfix/
 ├── staff-portal/               # React 19 + Vite 6 staff portal (Tailwind CSS, TS)
 ├── admin-portal/               # React 19 + Vite 6 admin portal (Tailwind CSS, TS)
 ├── backend/                    # Node 20+ Express REST API (TypeScript 5, Zod, Helmet)
-├── database/                   # Migrations and seed scripts (Day 4 execution)
+├── database/                   # Migrations, seed scripts, and verification tests
+│   ├── migrations/             # 9 ordered PostgreSQL DDL scripts (001 to 009)
+│   ├── seeds/                  # Pilot municipal seeds (BBMP, PMC) and sample tickets
+│   └── tests/                  # Executable schema verification script
 ├── design-prototype/           # Day 2 interactive prototype (React 19 + Vite)
-├── docs/                       # 18 master architecture & engineering specifications
+├── docs/                       # 23 master architecture & engineering specifications
 └── package.json                # Root orchestration scripts
 ```
 
@@ -154,6 +164,7 @@ civicfix/
 
 ## 7. Current Status & Next Steps
 
-* **Current Milestone:** **Day 3 Complete** (Development Environment Setup & Multi-Tier Project Foundation).
-* **Next Milestone:** **Day 4: Supabase Project & PostgreSQL Schema** (PostgreSQL 15+ initialization, 14-table migration execution, PostGIS extension, and category seed data).
+* **Current Milestone:** **Day 4 Complete** (Production-Minded Database Architecture, PostgreSQL Schema, Migrations, RLS & Seed Data).
+* **Next Milestone:** **Day 5: Backend Foundation, Authentication Boundaries, Authorization Middleware, and Secure API Architecture**.
+
 

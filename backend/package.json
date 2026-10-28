@@ -8,6 +8,7 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
+    "gen:types": "npx supabase gen types typescript --local > src/types/database.types.ts",
     "clean": "node -e \"try { require('fs').rmSync('dist', { recursive: true, force: true }); } catch (e) {}\""
   },
   "dependencies": {
