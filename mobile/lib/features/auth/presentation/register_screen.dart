@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
+import '../../../../core/constants/app_dimensions.dart';
+import '../../../../core/constants/app_typography.dart';
+import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_card.dart';
+import '../../../../core/widgets/app_text_field.dart';
 import '../providers/auth_provider.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
@@ -17,7 +22,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _obscurePassword = true;
+  final _confirmPasswordController = TextEditingController();
+  bool _agreedToTerms = false;
+  String? _termsError;
 
   @override
   void dispose() {
@@ -25,20 +32,37 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     _emailController.dispose();
     _phoneController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
   void _submit() {
-    if (_formKey.currentState?.validate() ?? false) {
-      ref.read(authNotifierProvider.notifier).registerCitizen(
-            fullName: _nameController.text.trim(),
-            email: _emailController.text.trim(),
-            password: _passwordController.text,
-            phone: _phoneController.text.trim().isNotEmpty
-                ? _phoneController.text.trim()
-                : null,
-          );
+    setState(() {
+      _termsError = _agreedToTerms
+          ? null
+          : 'You must agree to the Terms of Service & Privacy Policy.';
+    });
+
+    if (!(_formKey.currentState?.validate() ?? false) || !_agreedToTerms) return;
+
+    if (_passwordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Passwords do not match. Please verify both fields.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
     }
+
+    ref.read(authNotifierProvider.notifier).registerCitizen(
+          fullName: _nameController.text.trim(),
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          phone: _phoneController.text.trim().isNotEmpty
+              ? _phoneController.text.trim()
+              : null,
+        );
   }
 
   @override
@@ -47,7 +71,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     ref.listen<AuthState>(authNotifierProvider, (previous, next) {
       if (next.status == AuthStatus.authenticated) {
-        context.go('/');
+        context.go('/home');
       } else if (next.status == AuthStatus.verificationPending) {
         context.go('/verify-email');
       }
@@ -64,7 +88,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          padding: AppDimensions.pagePadding,
           child: Form(
             key: _formKey,
             child: Column(
@@ -72,42 +96,35 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               children: [
                 const Text(
                   'Join CivicFix Community',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
+                  style: AppTypography.pageHeading,
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: AppDimensions.xs),
                 const Text(
                   'Report potholes, broken streetlights, and sanitation issues in your neighborhood.',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: AppColors.textSecondary,
-                    height: 1.4,
-                  ),
+                  style: AppTypography.bodyMedium,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppDimensions.base),
 
+                // Server Error Feedback
                 if (authState.status == AuthStatus.error &&
                     authState.errorMessage != null) ...[
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(AppDimensions.md),
                     decoration: BoxDecoration(
-                      color: Colors.red.shade50,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.red.shade200),
+                      color: AppColors.errorLight,
+                      borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+                      border: Border.all(color: AppColors.error.withAlpha(50)),
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.error_outline,
-                            color: Colors.red, size: 20),
-                        const SizedBox(width: 8),
+                        const Icon(Icons.error_outline_rounded,
+                            color: AppColors.error, size: 20),
+                        const SizedBox(width: AppDimensions.sm),
                         Expanded(
                           child: Text(
                             authState.errorMessage!,
-                            style: TextStyle(
-                              color: Colors.red.shade800,
+                            style: const TextStyle(
+                              color: AppColors.error,
                               fontSize: 12,
                             ),
                           ),
@@ -115,137 +132,148 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppDimensions.base),
                 ],
 
-                // Full Name Field
-                TextFormField(
-                  controller: _nameController,
-                  textCapitalization: TextCapitalization.words,
-                  textInputAction: TextInputAction.next,
-                  decoration: const InputDecoration(
-                    labelText: 'Full Name *',
-                    hintText: 'Rahul Patil',
-                    prefixIcon: Icon(Icons.person_outline),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().length < 2) {
-                      return 'Full name must contain at least 2 characters.';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-
-                // Email Field
-                TextFormField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
-                  decoration: const InputDecoration(
-                    labelText: 'Email Address *',
-                    hintText: 'rahul@example.com',
-                    prefixIcon: Icon(Icons.email_outlined),
-                  ),
-                  validator: (value) {
-                    if (value == null || !value.contains('@') || !value.contains('.')) {
-                      return 'Please enter a valid email address.';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-
-                // Phone Number Field (Optional)
-                TextFormField(
-                  controller: _phoneController,
-                  keyboardType: TextInputType.phone,
-                  textInputAction: TextInputAction.next,
-                  decoration: const InputDecoration(
-                    labelText: 'Phone Number (Optional)',
-                    hintText: '+919876543210',
-                    prefixIcon: Icon(Icons.phone_outlined),
-                  ),
-                  validator: (value) {
-                    if (value != null && value.trim().isNotEmpty) {
-                      final cleaned = value.replaceAll(RegExp(r'[\s-]'), '');
-                      if (!RegExp(r'^(\+91)?[6-9]\d{9}$').hasMatch(cleaned)) {
-                        return 'Please enter a valid 10-digit Indian mobile number.';
-                      }
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-
-                // Password Field
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: _obscurePassword,
-                  textInputAction: TextInputAction.done,
-                  onFieldSubmitted: (_) => _submit(),
-                  decoration: InputDecoration(
-                    labelText: 'Password *',
-                    hintText: 'Min. 8 characters with number & symbol',
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
+                // Registration Form Card
+                AppCard(
+                  padding: const EdgeInsets.all(AppDimensions.base),
+                  child: Column(
+                    children: [
+                      AppTextField(
+                        label: 'Full Name *',
+                        controller: _nameController,
+                        hintText: 'Rahul Patil',
+                        prefixIcon: Icons.person_outline,
+                        textCapitalization: TextCapitalization.words,
+                        validator: (value) {
+                          if (value == null || value.trim().length < 2) {
+                            return 'Full name must contain at least 2 characters.';
+                          }
+                          return null;
+                        },
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.length < 8) {
-                      return 'Password must be at least 8 characters.';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 24),
+                      const SizedBox(height: AppDimensions.base),
 
-                // Submit Registration Button
-                ElevatedButton(
-                  onPressed: authState.status == AuthStatus.loading ? null : _submit,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  child: authState.status == AuthStatus.loading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                      : const Text(
-                          'Create Citizen Account',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
+                      AppTextField(
+                        label: 'Email Address *',
+                        controller: _emailController,
+                        hintText: 'citizen@example.com',
+                        keyboardType: TextInputType.emailAddress,
+                        prefixIcon: Icons.email_outlined,
+                        validator: (value) {
+                          if (value == null || !value.contains('@') || !value.contains('.')) {
+                            return 'Please enter a valid email address.';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: AppDimensions.base),
+
+                      AppTextField(
+                        label: 'Phone Number (Optional)',
+                        controller: _phoneController,
+                        hintText: '+919876543210',
+                        keyboardType: TextInputType.phone,
+                        prefixIcon: Icons.phone_outlined,
+                        validator: (value) {
+                          if (value != null && value.trim().isNotEmpty) {
+                            final cleaned = value.replaceAll(RegExp(r'[\s-]'), '');
+                            if (!RegExp(r'^(\+91)?[6-9]\d{9}$').hasMatch(cleaned)) {
+                              return 'Please enter a valid 10-digit Indian mobile number.';
+                            }
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: AppDimensions.base),
+
+                      AppPasswordField(
+                        label: 'Password *',
+                        controller: _passwordController,
+                        hintText: 'Min 8 chars with number',
+                        validator: (value) {
+                          if (value == null || value.length < 8) {
+                            return 'Password must contain at least 8 characters.';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: AppDimensions.base),
+
+                      AppPasswordField(
+                        label: 'Confirm Password *',
+                        controller: _confirmPasswordController,
+                        hintText: 'Re-enter password',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please confirm your password.';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: AppDimensions.md),
+
+                      // Terms and conditions checkbox
+                      CheckboxListTile(
+                        contentPadding: EdgeInsets.zero,
+                        value: _agreedToTerms,
+                        onChanged: (val) {
+                          setState(() {
+                            _agreedToTerms = val ?? false;
+                            if (_agreedToTerms) _termsError = null;
+                          });
+                        },
+                        title: const Text(
+                          'I agree to CivicFix Terms of Service and Privacy Policy under DPDP Act 2023.',
+                          style: AppTypography.bodySmall,
+                        ),
+                        controlAffinity: ListTileControlAffinity.leading,
+                      ),
+                      if (_termsError != null)
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            _termsError!,
+                            style: const TextStyle(
+                              color: AppColors.error,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
-                ),
-                const SizedBox(height: 16),
-
-                // Notice
-                const Text(
-                  'By registering, you agree to CivicFix Terms of Service and Data Privacy Policy under DPDP Act 2023.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: AppColors.textTertiary,
-                    height: 1.4,
+                    ],
                   ),
+                ),
+                const SizedBox(height: AppDimensions.lg),
+
+                AppButton(
+                  label: 'Create Citizen Account',
+                  isLoading: authState.status == AuthStatus.loading,
+                  onPressed: _submit,
+                ),
+                const SizedBox(height: AppDimensions.lg),
+
+                // Sign in link
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Already registered?',
+                      style: AppTypography.bodyMedium,
+                    ),
+                    TextButton(
+                      onPressed: () => context.pop(),
+                      child: const Text(
+                        'Sign In',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

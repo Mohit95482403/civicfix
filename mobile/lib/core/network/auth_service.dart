@@ -172,6 +172,68 @@ class AuthService {
     }
   }
 
+  /// Reset password completion
+  Future<void> resetPassword({required String newPassword}) async {
+    try {
+      await _dio.post(
+        '/auth/reset-password',
+        data: {'newPassword': newPassword},
+        options: Options(
+          headers: {'Authorization': 'Bearer $_accessToken'},
+        ),
+      );
+    } on DioException catch (e) {
+      throw _parseError(e);
+    }
+  }
+
+  /// Fetch full user profile
+  Future<Map<String, dynamic>> getProfile() async {
+    try {
+      final response = await _dio.get(
+        '/profile',
+        options: Options(
+          headers: {'Authorization': 'Bearer $_accessToken'},
+        ),
+      );
+
+      final body = response.data as Map<String, dynamic>;
+      return body['data'] as Map<String, dynamic>? ?? {};
+    } on DioException catch (e) {
+      throw _parseError(e);
+    }
+  }
+
+  /// Update permitted profile fields (fullName, phoneNumber, preferredLanguage)
+  Future<AuthUser> updateProfile({
+    String? fullName,
+    String? phone,
+    String? preferredLanguage,
+  }) async {
+    try {
+      final payload = <String, dynamic>{};
+      if (fullName != null && fullName.trim().isNotEmpty) payload['fullName'] = fullName.trim();
+      if (phone != null) payload['phoneNumber'] = phone.trim();
+      if (preferredLanguage != null) payload['preferredLanguage'] = preferredLanguage;
+
+      final response = await _dio.patch(
+        '/profile',
+        data: payload,
+        options: Options(
+          headers: {'Authorization': 'Bearer $_accessToken'},
+        ),
+      );
+
+      final body = response.data as Map<String, dynamic>;
+      final data = body['data'] as Map<String, dynamic>? ?? {};
+      final profile = data['profile'] as Map<String, dynamic>? ?? {};
+
+      return AuthUser.fromJson(profile);
+    } on DioException catch (e) {
+      throw _parseError(e);
+    }
+  }
+
   /// Terminate session and clear credentials
   Future<void> logout() async {
     try {

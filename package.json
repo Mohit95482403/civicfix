@@ -4,19 +4,23 @@
   "private": true,
   "description": "CivicFix — Startup-level civic issue reporting and resolution tracking platform",
   "scripts": {
+    "dev": "npm run dev:web",
+    "dev:web": "npm --prefix web-app run dev",
     "dev:backend": "npm --prefix backend run dev",
     "dev:staff": "npm --prefix staff-portal run dev",
     "dev:admin": "npm --prefix admin-portal run dev",
     "dev:prototype": "npm --prefix design-prototype run dev",
+    "build:web": "npm --prefix web-app run build",
     "build:backend": "npm --prefix backend run build",
     "build:staff": "npm --prefix staff-portal run build",
     "build:admin": "npm --prefix admin-portal run build",
     "build:prototype": "npm --prefix design-prototype run build",
-    "build:all": "npm run build:backend && npm run build:staff && npm run build:admin",
+    "build:all": "npm run build:backend && npm run build:web",
+    "typecheck:web": "npm --prefix web-app run typecheck",
     "typecheck:backend": "npm --prefix backend run typecheck",
     "typecheck:staff": "npm --prefix staff-portal run typecheck",
     "typecheck:admin": "npm --prefix admin-portal run typecheck",
-    "check:all": "npm run typecheck:backend && npm run typecheck:staff && npm run typecheck:admin"
+    "check:all": "npm run typecheck:backend && npm run typecheck:web"
   },
   "devDependencies": {},
   "engines": {

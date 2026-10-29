@@ -59,6 +59,25 @@ class AuthNotifier extends Notifier<AuthState> {
     return AuthState.initial();
   }
 
+  /// Check existing session on splash / app startup
+  Future<void> restoreSession() async {
+    if (!AuthService.isAuthenticated) {
+      state = const AuthState(status: AuthStatus.unauthenticated);
+      return;
+    }
+
+    try {
+      final user = await _authService.getMe();
+      state = state.copyWith(
+        status: AuthStatus.authenticated,
+        user: user,
+      );
+    } catch (_) {
+      AuthService.clearTokens();
+      state = const AuthState(status: AuthStatus.unauthenticated);
+    }
+  }
+
   Future<void> login({
     required String email,
     required String password,
@@ -126,6 +145,46 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
+  Future<void> updateProfile({
+    String? fullName,
+    String? phone,
+    String? preferredLanguage,
+  }) async {
+    state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
+
+    try {
+      final updatedUser = await _authService.updateProfile(
+        fullName: fullName,
+        phone: phone,
+        preferredLanguage: preferredLanguage,
+      );
+      state = state.copyWith(
+        status: AuthStatus.authenticated,
+        user: updatedUser,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        status: AuthStatus.error,
+        errorMessage: e.toString().replaceFirst('Exception: ', ''),
+      );
+    }
+  }
+
+  Future<void> resetPassword({required String newPassword}) async {
+    state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
+
+    try {
+      await _authService.resetPassword(newPassword: newPassword);
+      state = state.copyWith(status: AuthStatus.unauthenticated);
+    } catch (e) {
+      state = state.copyWith(
+        status: AuthStatus.error,
+        errorMessage: e.toString().replaceFirst('Exception: ', ''),
+      );
+      rethrow;
+    }
+  }
+
   Future<void> logout() async {
     await _authService.logout();
     state = const AuthState(status: AuthStatus.unauthenticated);
@@ -133,5 +192,9 @@ class AuthNotifier extends Notifier<AuthState> {
 
   Future<String> forgotPassword(String email) async {
     return _authService.forgotPassword(email: email);
+  }
+
+  void clearError() {
+    state = state.copyWith(errorMessage: null);
   }
 }

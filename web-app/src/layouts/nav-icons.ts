@@ -1,0 +1,23 @@
+export { 
+  Home, 
+  ClipboardList as Assignment, 
+  PlusCircle as AddCircle, 
+  Bell as Notifications, 
+  User as Person, 
+  Menu, 
+  X as Close, 
+  LogOut, 
+  ChevronRight,
+  Wrench,
+  HardHat,
+  CheckCircle2,
+  Clock,
+  Layers,
+  AlertTriangle,
+  Building2,
+  Users,
+  History,
+  Shield,
+  FileText,
+  Settings
+} from 'lucide-react';
