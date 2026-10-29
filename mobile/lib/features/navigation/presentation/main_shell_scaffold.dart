@@ -5,10 +5,7 @@ import '../../../app/theme/app_colors.dart';
 class MainShellScaffold extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
-  const MainShellScaffold({
-    super.key,
-    required this.navigationShell,
-  });
+  const MainShellScaffold({super.key, required this.navigationShell});
 
   void _onTap(int index) {
     navigationShell.goBranch(

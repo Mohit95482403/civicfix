@@ -16,7 +16,9 @@ class NearbyIssuesScreen extends StatelessWidget {
         title: const Text('Nearby Civic Issues'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+          onPressed: () => context.canPop()
+              ? context.pop()
+              : context.go('/citizen/dashboard'),
         ),
       ),
       body: SafeArea(
@@ -108,7 +110,9 @@ class NearbyIssuesScreen extends StatelessWidget {
                       height: 40,
                       decoration: BoxDecoration(
                         color: AppColors.primaryLight,
-                        borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusMd,
+                        ),
                       ),
                       alignment: Alignment.center,
                       child: const Text('🕳️', style: TextStyle(fontSize: 20)),
@@ -118,7 +122,10 @@ class NearbyIssuesScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Pothole Cluster #14', style: AppTypography.cardHeading),
+                          Text(
+                            'Pothole Cluster #14',
+                            style: AppTypography.cardHeading,
+                          ),
                           const SizedBox(height: 2),
                           const Text(
                             '100 Feet Ring Road • 400m away',
@@ -134,7 +141,9 @@ class NearbyIssuesScreen extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.inProgressLight,
-                        borderRadius: BorderRadius.circular(AppDimensions.radiusFull),
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusFull,
+                        ),
                       ),
                       child: const Text(
                         'Assigned',

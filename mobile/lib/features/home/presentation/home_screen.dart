@@ -98,7 +98,10 @@ class HomeScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white.withAlpha(40),
                       borderRadius: BorderRadius.circular(20),
@@ -149,12 +152,11 @@ class HomeScreen extends ConsumerWidget {
             // Primary CTA Button
             ElevatedButton.icon(
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Issue Reporting Wizard scheduled for Day 8 implementation.'),
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
+                if (isAuthenticated) {
+                  context.push('/complaints/new');
+                } else {
+                  context.push('/login');
+                }
               },
               icon: const Icon(Icons.add_a_photo_outlined, size: 20),
               label: const Text('Report an Issue'),
@@ -163,6 +165,173 @@ class HomeScreen extends ConsumerWidget {
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Unified Role Portals Section
+            const Text(
+              'Unified CivicFix Portals',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            Row(
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      if (isAuthenticated) {
+                        context.go('/citizen/dashboard');
+                      } else {
+                        context.push('/login');
+                      }
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryLight,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: AppColors.primary.withAlpha(60),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Icon(
+                            Icons.person_pin_rounded,
+                            color: AppColors.primary,
+                            size: 22,
+                          ),
+                          SizedBox(height: 6),
+                          Text(
+                            'Citizen Portal',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primaryDark,
+                            ),
+                          ),
+                          SizedBox(height: 2),
+                          Text(
+                            'Report & track issues',
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      if (isAuthenticated) {
+                        context.go('/staff/dashboard');
+                      } else {
+                        context.push('/login');
+                      }
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColors.inProgressLight,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: AppColors.tealAccent.withAlpha(60),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Icon(
+                            Icons.engineering_rounded,
+                            color: AppColors.tealAccent,
+                            size: 22,
+                          ),
+                          SizedBox(height: 6),
+                          Text(
+                            'Staff Portal',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          SizedBox(height: 2),
+                          Text(
+                            'Field work orders',
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      if (isAuthenticated) {
+                        context.go('/admin/dashboard');
+                      } else {
+                        context.push('/login');
+                      }
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEDE9FE),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: const Color(0xFF7C3AED).withAlpha(60),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Icon(
+                            Icons.admin_panel_settings_rounded,
+                            color: Color(0xFF7C3AED),
+                            size: 22,
+                          ),
+                          SizedBox(height: 6),
+                          Text(
+                            'Admin Portal',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF581C87),
+                            ),
+                          ),
+                          SizedBox(height: 2),
+                          Text(
+                            'Triage & analytics',
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
 
             const SizedBox(height: 24),
@@ -208,7 +377,11 @@ class HomeScreen extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.developer_mode_rounded, size: 18, color: AppColors.primary),
+                      const Icon(
+                        Icons.developer_mode_rounded,
+                        size: 18,
+                        color: AppColors.primary,
+                      ),
                       const SizedBox(width: 8),
                       const Text(
                         'Environment & State Engine',
@@ -220,7 +393,10 @@ class HomeScreen extends ConsumerWidget {
                       ),
                       const Spacer(),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.successLight,
                           borderRadius: BorderRadius.circular(4),
@@ -260,10 +436,7 @@ class HomeScreen extends ConsumerWidget {
         unselectedItemColor: AppColors.textTertiary,
         type: BottomNavigationBarType.fixed,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_filled),
-            label: 'Home',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
           BottomNavigationBarItem(
             icon: Icon(Icons.map_outlined),
             label: 'Explore',

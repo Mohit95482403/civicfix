@@ -6,12 +6,7 @@ class UserAvatar extends StatelessWidget {
   final double size;
   final String? imageUrl;
 
-  const UserAvatar({
-    super.key,
-    this.name,
-    this.size = 38.0,
-    this.imageUrl,
-  });
+  const UserAvatar({super.key, this.name, this.size = 38.0, this.imageUrl});
 
   String get _initials {
     if (name == null || name!.trim().isEmpty) return 'CF';

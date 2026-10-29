@@ -42,10 +42,7 @@ class AppTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: AppTypography.formLabel,
-        ),
+        Text(label, style: AppTypography.formLabel),
         const SizedBox(height: AppDimensions.xs + 2),
         TextFormField(
           controller: controller,
@@ -102,10 +99,7 @@ class _AppPasswordFieldState extends State<AppPasswordField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.label,
-          style: AppTypography.formLabel,
-        ),
+        Text(widget.label, style: AppTypography.formLabel),
         const SizedBox(height: AppDimensions.xs + 2),
         TextFormField(
           controller: widget.controller,

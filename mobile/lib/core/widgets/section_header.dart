@@ -25,10 +25,7 @@ class SectionHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            title,
-            style: AppTypography.sectionHeading,
-          ),
+          Text(title, style: AppTypography.sectionHeading),
           if (trailing != null)
             trailing!
           else if (actionLabel != null && onActionTap != null)

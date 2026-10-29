@@ -89,7 +89,9 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.primaryLight,
-                        borderRadius: BorderRadius.circular(AppDimensions.radiusFull),
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusFull,
+                        ),
                       ),
                       child: Text(
                         (user?.role ?? 'citizen').toUpperCase(),
@@ -107,7 +109,10 @@ class ProfileScreen extends ConsumerWidget {
               const SizedBox(height: AppDimensions.base),
 
               // Contact Details Section
-              const Text('Account Information', style: AppTypography.sectionHeading),
+              const Text(
+                'Account Information',
+                style: AppTypography.sectionHeading,
+              ),
               const SizedBox(height: AppDimensions.sm),
               AppCard(
                 padding: const EdgeInsets.all(AppDimensions.base),

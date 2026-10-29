@@ -59,7 +59,9 @@ class AppTheme {
         color: AppColors.surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(AppDimensions.radiusLg)),
+          borderRadius: BorderRadius.all(
+            Radius.circular(AppDimensions.radiusLg),
+          ),
           side: BorderSide(color: AppColors.border),
         ),
         margin: EdgeInsets.zero,
@@ -67,7 +69,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.surface,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
           borderSide: const BorderSide(color: AppColors.border),
@@ -100,8 +105,14 @@ class AppTheme {
         backgroundColor: AppColors.surface,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.textSecondary,
-        selectedLabelStyle: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-        unselectedLabelStyle: TextStyle(fontSize: 11, fontWeight: FontWeight.normal),
+        selectedLabelStyle: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+        ),
+        unselectedLabelStyle: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.normal,
+        ),
         type: BottomNavigationBarType.fixed,
         elevation: 8,
       ),

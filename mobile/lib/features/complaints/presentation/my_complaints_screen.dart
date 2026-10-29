@@ -50,7 +50,8 @@ class MyComplaintsScreen extends ConsumerWidget {
                   _FilterChip(
                     label: 'Under Review',
                     isSelected: state.filter == ComplaintFilter.underReview,
-                    onTap: () => notifier.setFilter(ComplaintFilter.underReview),
+                    onTap: () =>
+                        notifier.setFilter(ComplaintFilter.underReview),
                   ),
                   _FilterChip(
                     label: 'In Progress',
@@ -79,14 +80,16 @@ class MyComplaintsScreen extends ConsumerWidget {
                 ? EmptyStateWidget(
                     icon: Icons.assignment_outlined,
                     title: 'No complaints in this category',
-                    description: 'Issues submitted by you in this status will appear here with live tracking notes.',
+                    description:
+                        'Issues submitted by you in this status will appear here with live tracking notes.',
                     buttonLabel: 'Report an Issue',
                     onButtonPressed: () => context.push('/complaints/new'),
                   )
                 : ListView.separated(
                     padding: const EdgeInsets.all(AppDimensions.base),
                     itemCount: state.filteredComplaints.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: AppDimensions.sm),
+                    separatorBuilder: (_, index) =>
+                        const SizedBox(height: AppDimensions.sm),
                     itemBuilder: (context, index) {
                       final item = state.filteredComplaints[index];
                       return AppCard(

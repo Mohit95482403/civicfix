@@ -40,7 +40,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   }
 
   Future<void> _save() async {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
 
     setState(() {
       _isSaving = true;
@@ -48,7 +50,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     });
 
     try {
-      await ref.read(authNotifierProvider.notifier).updateProfile(
+      await ref
+          .read(authNotifierProvider.notifier)
+          .updateProfile(
             fullName: _nameController.text.trim(),
             phone: _phoneController.text.trim().isNotEmpty
                 ? _phoneController.text.trim()
@@ -86,7 +90,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         title: const Text('Edit Profile'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+          onPressed: () =>
+              context.canPop() ? context.pop() : context.go('/citizen/profile'),
         ),
       ),
       body: SafeArea(
@@ -102,12 +107,17 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     padding: const EdgeInsets.all(AppDimensions.md),
                     decoration: BoxDecoration(
                       color: AppColors.errorLight,
-                      borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+                      borderRadius: BorderRadius.circular(
+                        AppDimensions.radiusMd,
+                      ),
                       border: Border.all(color: AppColors.error.withAlpha(50)),
                     ),
                     child: Text(
                       _errorMessage!,
-                      style: const TextStyle(color: AppColors.error, fontSize: 12),
+                      style: const TextStyle(
+                        color: AppColors.error,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                   const SizedBox(height: AppDimensions.base),
@@ -141,8 +151,13 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         prefixIcon: Icons.phone_outlined,
                         validator: (value) {
                           if (value != null && value.trim().isNotEmpty) {
-                            final cleaned = value.replaceAll(RegExp(r'[\s-]'), '');
-                            if (!RegExp(r'^(\+91)?[6-9]\d{9}$').hasMatch(cleaned)) {
+                            final cleaned = value.replaceAll(
+                              RegExp(r'[\s-]'),
+                              '',
+                            );
+                            if (!RegExp(
+                              r'^(\+91)?[6-9]\d{9}$',
+                            ).hasMatch(cleaned)) {
                               return 'Please enter a valid 10-digit Indian mobile number.';
                             }
                           }
@@ -151,21 +166,35 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       ),
                       const SizedBox(height: AppDimensions.base),
 
-                      const Text('Preferred Language', style: AppTypography.formLabel),
+                      const Text(
+                        'Preferred Language',
+                        style: AppTypography.formLabel,
+                      ),
                       const SizedBox(height: AppDimensions.xs + 2),
                       DropdownButtonFormField<String>(
-                        value: _selectedLanguage,
+                        initialValue: _selectedLanguage,
                         decoration: const InputDecoration(
                           prefixIcon: Icon(Icons.language_rounded, size: 20),
                         ),
                         items: const [
                           DropdownMenuItem(value: 'en', child: Text('English')),
-                          DropdownMenuItem(value: 'kn', child: Text('Kannada (ಕನ್ನಡ)')),
-                          DropdownMenuItem(value: 'hi', child: Text('Hindi (हिन्दी)')),
-                          DropdownMenuItem(value: 'mr', child: Text('Marathi (मराठी)')),
+                          DropdownMenuItem(
+                            value: 'kn',
+                            child: Text('Kannada (ಕನ್ನಡ)'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'hi',
+                            child: Text('Hindi (हिन्दी)'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'mr',
+                            child: Text('Marathi (मराठी)'),
+                          ),
                         ],
                         onChanged: (val) {
-                          if (val != null) setState(() => _selectedLanguage = val);
+                          if (val != null) {
+                            setState(() => _selectedLanguage = val);
+                          }
                         },
                       ),
                     ],

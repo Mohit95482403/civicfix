@@ -17,7 +17,8 @@ class EnvConfig {
   /// Default development configuration pointing to local Node.js API Gateway
   factory EnvConfig.development() {
     return const EnvConfig(
-      apiBaseUrl: 'http://10.0.2.2:5000/api/v1', // Android emulator loopback to host
+      apiBaseUrl:
+          'http://10.0.2.2:5000/api/v1', // Android emulator loopback to host
       supabaseUrl: 'https://your-project-id.supabase.co',
       supabaseAnonKey: 'your-supabase-anon-key',
       environment: 'development',
@@ -39,10 +40,7 @@ class EnvConfig {
         'SUPABASE_ANON_KEY',
         defaultValue: '',
       ),
-      environment: String.fromEnvironment(
-        'ENV',
-        defaultValue: 'development',
-      ),
+      environment: String.fromEnvironment('ENV', defaultValue: 'development'),
     );
   }
 }

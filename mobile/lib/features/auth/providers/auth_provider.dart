@@ -47,8 +47,9 @@ final authServiceProvider = Provider<AuthService>((ref) {
   return AuthService(config: EnvConfig.development());
 });
 
-final authNotifierProvider =
-    NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);
+final authNotifierProvider = NotifierProvider<AuthNotifier, AuthState>(
+  AuthNotifier.new,
+);
 
 class AuthNotifier extends Notifier<AuthState> {
   late final AuthService _authService;
@@ -68,20 +69,14 @@ class AuthNotifier extends Notifier<AuthState> {
 
     try {
       final user = await _authService.getMe();
-      state = state.copyWith(
-        status: AuthStatus.authenticated,
-        user: user,
-      );
+      state = state.copyWith(status: AuthStatus.authenticated, user: user);
     } catch (_) {
       AuthService.clearTokens();
       state = const AuthState(status: AuthStatus.unauthenticated);
     }
   }
 
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> login({required String email, required String password}) async {
     state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
 
     try {

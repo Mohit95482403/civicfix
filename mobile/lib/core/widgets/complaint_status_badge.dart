@@ -6,10 +6,7 @@ import '../constants/app_typography.dart';
 class ComplaintStatusBadge extends StatelessWidget {
   final String status;
 
-  const ComplaintStatusBadge({
-    super.key,
-    required this.status,
-  });
+  const ComplaintStatusBadge({super.key, required this.status});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +14,10 @@ class ComplaintStatusBadge extends StatelessWidget {
     Color fg;
     String label;
 
-    final normalized = status.toUpperCase().replaceAll('-', '_').replaceAll(' ', '_');
+    final normalized = status
+        .toUpperCase()
+        .replaceAll('-', '_')
+        .replaceAll(' ', '_');
 
     switch (normalized) {
       case 'SUBMITTED':
@@ -70,16 +70,10 @@ class ComplaintStatusBadge extends StatelessWidget {
           Container(
             width: 6,
             height: 6,
-            decoration: BoxDecoration(
-              color: fg,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: fg, shape: BoxShape.circle),
           ),
           const SizedBox(width: AppDimensions.xs + 2),
-          Text(
-            label,
-            style: AppTypography.statusBadge.copyWith(color: fg),
-          ),
+          Text(label, style: AppTypography.statusBadge.copyWith(color: fg)),
         ],
       ),
     );

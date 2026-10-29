@@ -12,7 +12,8 @@ class SplashScreen extends ConsumerStatefulWidget {
   ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends ConsumerState<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
@@ -53,7 +54,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
   Widget build(BuildContext context) {
     ref.listen<AuthState>(authNotifierProvider, (prev, next) {
       if (next.status == AuthStatus.authenticated) {
-        context.go('/home');
+        final target = next.user?.defaultRoute ?? '/citizen/dashboard';
+        context.go(target);
       } else if (next.status == AuthStatus.unauthenticated) {
         context.go('/login');
       } else if (next.status == AuthStatus.verificationPending) {
@@ -128,7 +130,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
                 height: 24,
                 child: CircularProgressIndicator(
                   strokeWidth: 2.2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white.withAlpha(200)),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Colors.white.withAlpha(200),
+                  ),
                 ),
               ),
               const SizedBox(height: 12),

@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_typography.dart';
-import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/complaint_status_badge.dart';
 import '../../../core/widgets/empty_state_widget.dart';
@@ -61,7 +60,9 @@ class HomeDashboardScreen extends ConsumerWidget {
                         children: [
                           Text(
                             greeting,
-                            style: AppTypography.pageHeading.copyWith(fontSize: 18),
+                            style: AppTypography.pageHeading.copyWith(
+                              fontSize: 18,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -115,12 +116,18 @@ class HomeDashboardScreen extends ConsumerWidget {
                             ),
                             decoration: BoxDecoration(
                               color: Colors.white.withAlpha(35),
-                              borderRadius: BorderRadius.circular(AppDimensions.radiusFull),
+                              borderRadius: BorderRadius.circular(
+                                AppDimensions.radiusFull,
+                              ),
                             ),
                             child: const Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.flash_on_rounded, size: 12, color: Colors.amber),
+                                Icon(
+                                  Icons.flash_on_rounded,
+                                  size: 12,
+                                  color: Colors.amber,
+                                ),
                                 SizedBox(width: 4),
                                 Text(
                                   'CITIZEN PORTAL',
@@ -160,14 +167,19 @@ class HomeDashboardScreen extends ConsumerWidget {
                         width: double.infinity,
                         child: ElevatedButton.icon(
                           onPressed: () => context.push('/complaints/new'),
-                          icon: const Icon(Icons.add_a_photo_outlined, size: 18),
+                          icon: const Icon(
+                            Icons.add_a_photo_outlined,
+                            size: 18,
+                          ),
                           label: const Text('Report an Issue'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.tealAccent,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 13),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+                              borderRadius: BorderRadius.circular(
+                                AppDimensions.radiusMd,
+                              ),
                             ),
                             elevation: 0,
                           ),
@@ -241,7 +253,9 @@ class HomeDashboardScreen extends ConsumerWidget {
                         onTap: () {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Ward Control Room directory: BBMP 1533 / PMC 1800-1030-222'),
+                              content: Text(
+                                'Ward Control Room directory: BBMP 1533 / PMC 1800-1030-222',
+                              ),
                               behavior: SnackBarBehavior.floating,
                             ),
                           );
@@ -268,7 +282,8 @@ class HomeDashboardScreen extends ConsumerWidget {
                     child: EmptyStateWidget(
                       icon: Icons.check_box_outline_blank_rounded,
                       title: "You haven't reported any issues yet",
-                      description: 'When you submit a civic issue, tracking updates and proof of repair appear here.',
+                      description:
+                          'When you submit a civic issue, tracking updates and proof of repair appear here.',
                       buttonLabel: 'Report Your First Issue',
                       onButtonPressed: () => context.push('/complaints/new'),
                     ),
@@ -278,7 +293,8 @@ class HomeDashboardScreen extends ConsumerWidget {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: dashboardData.recentComplaints.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: AppDimensions.sm),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: AppDimensions.sm),
                     itemBuilder: (context, index) {
                       final item = dashboardData.recentComplaints[index];
                       return AppCard(

@@ -11,9 +11,7 @@ class NotificationsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Notifications & Alerts'),
-      ),
+      appBar: AppBar(title: const Text('Notifications & Alerts')),
       body: SafeArea(
         child: Column(
           children: [
@@ -26,7 +24,10 @@ class NotificationsScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Direct Updates', style: AppTypography.cardHeading),
+                  const Text(
+                    'Direct Updates',
+                    style: AppTypography.cardHeading,
+                  ),
                   Text(
                     'Push alerts via FCM',
                     style: AppTypography.bodySmall.copyWith(
@@ -41,7 +42,8 @@ class NotificationsScreen extends StatelessWidget {
               child: EmptyStateWidget(
                 icon: Icons.notifications_none_rounded,
                 title: 'No new notifications',
-                description: 'When municipal dispatch updates your work orders, status changes and technician notes will be notified here.',
+                description:
+                    'When municipal dispatch updates your work orders, status changes and technician notes will be notified here.',
               ),
             ),
           ],

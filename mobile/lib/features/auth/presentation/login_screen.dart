@@ -30,7 +30,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   void _submit() {
     if (_formKey.currentState?.validate() ?? false) {
-      ref.read(authNotifierProvider.notifier).login(
+      ref
+          .read(authNotifierProvider.notifier)
+          .login(
             email: _emailController.text.trim(),
             password: _passwordController.text,
           );
@@ -43,7 +45,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     ref.listen<AuthState>(authNotifierProvider, (previous, next) {
       if (next.status == AuthStatus.authenticated) {
-        context.go('/home');
+        final target = next.user?.defaultRoute ?? '/citizen/dashboard';
+        context.go(target);
       } else if (next.status == AuthStatus.verificationPending) {
         context.go('/verify-email');
       }
@@ -68,7 +71,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       height: 60,
                       decoration: BoxDecoration(
                         color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(AppDimensions.radiusLg),
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusLg,
+                        ),
                         boxShadow: [
                           BoxShadow(
                             color: AppColors.primary.withAlpha(80),
@@ -110,13 +115,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       padding: const EdgeInsets.all(AppDimensions.md),
                       decoration: BoxDecoration(
                         color: AppColors.errorLight,
-                        borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
-                        border: Border.all(color: AppColors.error.withAlpha(50)),
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusMd,
+                        ),
+                        border: Border.all(
+                          color: AppColors.error.withAlpha(50),
+                        ),
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.error_outline_rounded,
-                              color: AppColors.error, size: 20),
+                          const Icon(
+                            Icons.error_outline_rounded,
+                            color: AppColors.error,
+                            size: 20,
+                          ),
                           const SizedBox(width: AppDimensions.sm),
                           Expanded(
                             child: Text(
@@ -140,7 +152,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const Text('Welcome Back', style: AppTypography.cardHeading),
+                        const Text(
+                          'Welcome Back',
+                          style: AppTypography.cardHeading,
+                        ),
                         const SizedBox(height: 2),
                         const Text(
                           'Sign in to track issues and help improve your community.',

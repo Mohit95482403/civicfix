@@ -43,7 +43,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           : 'You must agree to the Terms of Service & Privacy Policy.';
     });
 
-    if (!(_formKey.currentState?.validate() ?? false) || !_agreedToTerms) return;
+    if (!(_formKey.currentState?.validate() ?? false) || !_agreedToTerms) {
+      return;
+    }
 
     if (_passwordController.text != _confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -55,7 +57,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       return;
     }
 
-    ref.read(authNotifierProvider.notifier).registerCitizen(
+    ref
+        .read(authNotifierProvider.notifier)
+        .registerCitizen(
           fullName: _nameController.text.trim(),
           email: _emailController.text.trim(),
           password: _passwordController.text,
@@ -112,13 +116,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     padding: const EdgeInsets.all(AppDimensions.md),
                     decoration: BoxDecoration(
                       color: AppColors.errorLight,
-                      borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+                      borderRadius: BorderRadius.circular(
+                        AppDimensions.radiusMd,
+                      ),
                       border: Border.all(color: AppColors.error.withAlpha(50)),
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.error_outline_rounded,
-                            color: AppColors.error, size: 20),
+                        const Icon(
+                          Icons.error_outline_rounded,
+                          color: AppColors.error,
+                          size: 20,
+                        ),
                         const SizedBox(width: AppDimensions.sm),
                         Expanded(
                           child: Text(
@@ -162,7 +171,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         keyboardType: TextInputType.emailAddress,
                         prefixIcon: Icons.email_outlined,
                         validator: (value) {
-                          if (value == null || !value.contains('@') || !value.contains('.')) {
+                          if (value == null ||
+                              !value.contains('@') ||
+                              !value.contains('.')) {
                             return 'Please enter a valid email address.';
                           }
                           return null;
@@ -178,8 +189,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         prefixIcon: Icons.phone_outlined,
                         validator: (value) {
                           if (value != null && value.trim().isNotEmpty) {
-                            final cleaned = value.replaceAll(RegExp(r'[\s-]'), '');
-                            if (!RegExp(r'^(\+91)?[6-9]\d{9}$').hasMatch(cleaned)) {
+                            final cleaned = value.replaceAll(
+                              RegExp(r'[\s-]'),
+                              '',
+                            );
+                            if (!RegExp(
+                              r'^(\+91)?[6-9]\d{9}$',
+                            ).hasMatch(cleaned)) {
                               return 'Please enter a valid 10-digit Indian mobile number.';
                             }
                           }

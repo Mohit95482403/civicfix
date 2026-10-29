@@ -73,4 +73,9 @@ class AppTypography {
     color: AppColors.textPrimary,
     letterSpacing: -0.5,
   );
+
+  // Convenience aliases for screens
+  static const TextStyle sectionTitle = sectionHeading;
+  static const TextStyle cardTitle = cardHeading;
+  static const TextStyle caption = bodySmall;
 }

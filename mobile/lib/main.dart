@@ -6,9 +6,5 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Root entry wrapped with Riverpod's ProviderScope for reactive state management
-  runApp(
-    const ProviderScope(
-      child: CivicFixApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: CivicFixApp()));
 }

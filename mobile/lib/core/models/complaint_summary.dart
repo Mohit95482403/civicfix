@@ -24,7 +24,10 @@ class ComplaintSummary {
   factory ComplaintSummary.fromJson(Map<String, dynamic> json) {
     return ComplaintSummary(
       id: json['id'] as String? ?? '',
-      complaintNumber: json['complaint_number'] as String? ?? json['complaintNumber'] as String? ?? 'CF-XXXX',
+      complaintNumber:
+          json['complaint_number'] as String? ??
+          json['complaintNumber'] as String? ??
+          'CF-XXXX',
       title: json['title'] as String? ?? 'Civic Issue',
       category: json['category'] as String? ?? 'General',
       status: json['status'] as String? ?? 'SUBMITTED',
@@ -65,8 +68,12 @@ class DashboardStats {
 
   factory DashboardStats.fromJson(Map<String, dynamic> json) {
     return DashboardStats(
-      totalSubmitted: json['totalSubmitted'] as int? ?? json['total_submitted'] as int? ?? 0,
-      inProgress: json['inProgress'] as int? ?? json['in_progress'] as int? ?? 0,
+      totalSubmitted:
+          json['totalSubmitted'] as int? ??
+          json['total_submitted'] as int? ??
+          0,
+      inProgress:
+          json['inProgress'] as int? ?? json['in_progress'] as int? ?? 0,
       resolved: json['resolved'] as int? ?? 0,
     );
   }

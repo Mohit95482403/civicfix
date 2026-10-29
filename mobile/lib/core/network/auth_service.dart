@@ -22,17 +22,17 @@ class AuthService {
   static String? _refreshToken;
 
   AuthService({required EnvConfig config})
-      : _dio = Dio(
-          BaseOptions(
-            baseUrl: config.apiBaseUrl.replaceFirst('/v1', ''),
-            connectTimeout: const Duration(seconds: 15),
-            receiveTimeout: const Duration(seconds: 15),
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-            },
-          ),
-        );
+    : _dio = Dio(
+        BaseOptions(
+          baseUrl: config.apiBaseUrl.replaceFirst('/v1', ''),
+          connectTimeout: const Duration(seconds: 15),
+          receiveTimeout: const Duration(seconds: 15),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        ),
+      );
 
   static String? get accessToken => _accessToken;
   static String? get refreshToken => _refreshToken;
@@ -83,7 +83,8 @@ class AuthService {
       return AuthResult(
         user: user,
         session: session,
-        emailVerificationRequired: data['emailVerificationRequired'] as bool? ?? false,
+        emailVerificationRequired:
+            data['emailVerificationRequired'] as bool? ?? false,
         message: body['message'] as String?,
       );
     } on DioException catch (e) {
@@ -99,10 +100,7 @@ class AuthService {
     try {
       final response = await _dio.post(
         '/auth/login',
-        data: {
-          'email': email.trim().toLowerCase(),
-          'password': password,
-        },
+        data: {'email': email.trim().toLowerCase(), 'password': password},
       );
 
       final body = response.data as Map<String, dynamic>;
@@ -122,7 +120,8 @@ class AuthService {
       return AuthResult(
         user: user,
         session: session,
-        emailVerificationRequired: data['emailVerificationRequired'] as bool? ?? false,
+        emailVerificationRequired:
+            data['emailVerificationRequired'] as bool? ?? false,
         message: body['message'] as String?,
       );
     } on DioException catch (e) {
@@ -139,9 +138,7 @@ class AuthService {
     try {
       final response = await _dio.get(
         '/auth/me',
-        options: Options(
-          headers: {'Authorization': 'Bearer $_accessToken'},
-        ),
+        options: Options(headers: {'Authorization': 'Bearer $_accessToken'}),
       );
 
       final body = response.data as Map<String, dynamic>;
@@ -166,7 +163,8 @@ class AuthService {
       );
 
       final body = response.data as Map<String, dynamic>;
-      return body['message'] as String? ?? 'Password recovery email dispatched.';
+      return body['message'] as String? ??
+          'Password recovery email dispatched.';
     } on DioException catch (e) {
       throw _parseError(e);
     }
@@ -178,9 +176,7 @@ class AuthService {
       await _dio.post(
         '/auth/reset-password',
         data: {'newPassword': newPassword},
-        options: Options(
-          headers: {'Authorization': 'Bearer $_accessToken'},
-        ),
+        options: Options(headers: {'Authorization': 'Bearer $_accessToken'}),
       );
     } on DioException catch (e) {
       throw _parseError(e);
@@ -192,9 +188,7 @@ class AuthService {
     try {
       final response = await _dio.get(
         '/profile',
-        options: Options(
-          headers: {'Authorization': 'Bearer $_accessToken'},
-        ),
+        options: Options(headers: {'Authorization': 'Bearer $_accessToken'}),
       );
 
       final body = response.data as Map<String, dynamic>;
@@ -212,16 +206,20 @@ class AuthService {
   }) async {
     try {
       final payload = <String, dynamic>{};
-      if (fullName != null && fullName.trim().isNotEmpty) payload['fullName'] = fullName.trim();
-      if (phone != null) payload['phoneNumber'] = phone.trim();
-      if (preferredLanguage != null) payload['preferredLanguage'] = preferredLanguage;
+      if (fullName != null && fullName.trim().isNotEmpty) {
+        payload['fullName'] = fullName.trim();
+      }
+      if (phone != null) {
+        payload['phoneNumber'] = phone.trim();
+      }
+      if (preferredLanguage != null) {
+        payload['preferredLanguage'] = preferredLanguage;
+      }
 
       final response = await _dio.patch(
         '/profile',
         data: payload,
-        options: Options(
-          headers: {'Authorization': 'Bearer $_accessToken'},
-        ),
+        options: Options(headers: {'Authorization': 'Bearer $_accessToken'}),
       );
 
       final body = response.data as Map<String, dynamic>;
@@ -240,9 +238,7 @@ class AuthService {
       if (_accessToken != null) {
         await _dio.post(
           '/auth/logout',
-          options: Options(
-            headers: {'Authorization': 'Bearer $_accessToken'},
-          ),
+          options: Options(headers: {'Authorization': 'Bearer $_accessToken'}),
         );
       }
     } catch (_) {
@@ -263,7 +259,8 @@ class AuthService {
       }
     }
     return Exception(
-      error.message ?? 'A network communication error occurred. Please try again.',
+      error.message ??
+          'A network communication error occurred. Please try again.',
     );
   }
 }

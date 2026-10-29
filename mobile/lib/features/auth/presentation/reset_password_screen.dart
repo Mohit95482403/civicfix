@@ -13,7 +13,8 @@ class ResetPasswordScreen extends ConsumerStatefulWidget {
   const ResetPasswordScreen({super.key});
 
   @override
-  ConsumerState<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
+  ConsumerState<ResetPasswordScreen> createState() =>
+      _ResetPasswordScreenState();
 }
 
 class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
@@ -53,7 +54,9 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Password updated successfully. Please sign in with your new credentials.'),
+            content: Text(
+              'Password updated successfully. Please sign in with your new credentials.',
+            ),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -107,12 +110,17 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                     padding: const EdgeInsets.all(AppDimensions.md),
                     decoration: BoxDecoration(
                       color: AppColors.errorLight,
-                      borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+                      borderRadius: BorderRadius.circular(
+                        AppDimensions.radiusMd,
+                      ),
                       border: Border.all(color: AppColors.error.withAlpha(50)),
                     ),
                     child: Text(
                       _errorMessage!,
-                      style: const TextStyle(color: AppColors.error, fontSize: 12),
+                      style: const TextStyle(
+                        color: AppColors.error,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                   const SizedBox(height: AppDimensions.base),

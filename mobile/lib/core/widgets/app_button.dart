@@ -13,6 +13,9 @@ class AppButton extends StatelessWidget {
   final AppButtonVariant variant;
   final double? width;
   final double height;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
+  final bool? isOutlined;
 
   const AppButton({
     super.key,
@@ -23,33 +26,40 @@ class AppButton extends StatelessWidget {
     this.variant = AppButtonVariant.primary,
     this.width,
     this.height = AppDimensions.buttonHeight,
+    this.backgroundColor,
+    this.foregroundColor,
+    this.isOutlined,
   });
 
   @override
   Widget build(BuildContext context) {
-    Color backgroundColor;
-    Color foregroundColor;
+    final effectiveVariant = isOutlined == true
+        ? AppButtonVariant.outlined
+        : variant;
+
+    Color bg;
+    Color fg;
     BorderSide? borderSide;
 
-    switch (variant) {
+    switch (effectiveVariant) {
       case AppButtonVariant.primary:
-        backgroundColor = AppColors.primary;
-        foregroundColor = Colors.white;
+        bg = backgroundColor ?? AppColors.primary;
+        fg = foregroundColor ?? Colors.white;
         borderSide = null;
         break;
       case AppButtonVariant.secondary:
-        backgroundColor = AppColors.primaryLight;
-        foregroundColor = AppColors.primary;
+        bg = backgroundColor ?? AppColors.primaryLight;
+        fg = foregroundColor ?? AppColors.primary;
         borderSide = null;
         break;
       case AppButtonVariant.outlined:
-        backgroundColor = Colors.transparent;
-        foregroundColor = AppColors.primary;
+        bg = backgroundColor ?? Colors.transparent;
+        fg = foregroundColor ?? AppColors.primary;
         borderSide = const BorderSide(color: AppColors.border, width: 1.5);
         break;
       case AppButtonVariant.danger:
-        backgroundColor = AppColors.errorLight;
-        foregroundColor = AppColors.error;
+        bg = backgroundColor ?? AppColors.errorLight;
+        fg = foregroundColor ?? AppColors.error;
         borderSide = null;
         break;
     }
@@ -62,10 +72,10 @@ class AppButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isInteractive ? onPressed : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor,
-          foregroundColor: foregroundColor,
-          disabledBackgroundColor: backgroundColor.withAlpha(120),
-          disabledForegroundColor: foregroundColor.withAlpha(120),
+          backgroundColor: bg,
+          foregroundColor: fg,
+          disabledBackgroundColor: bg.withAlpha(120),
+          disabledForegroundColor: fg.withAlpha(120),
           elevation: 0,
           side: borderSide,
           shape: RoundedRectangleBorder(
@@ -79,7 +89,7 @@ class AppButton extends StatelessWidget {
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2.2,
-                  valueColor: AlwaysStoppedAnimation<Color>(foregroundColor),
+                  valueColor: AlwaysStoppedAnimation<Color>(fg),
                 ),
               )
             : Row(
@@ -93,7 +103,9 @@ class AppButton extends StatelessWidget {
                   Flexible(
                     child: Text(
                       label,
-                      style: AppTypography.button.copyWith(color: foregroundColor),
+                      style: AppTypography.button.copyWith(
+                        color: foregroundColor,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),

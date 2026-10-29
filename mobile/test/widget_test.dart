@@ -5,11 +5,7 @@ import 'package:civicfix_mobile/app/app.dart';
 void main() {
   testWidgets('CivicFix mobile app smoke test', (WidgetTester tester) async {
     // Build our app inside ProviderScope and trigger a frame.
-    await tester.pumpWidget(
-      const ProviderScope(
-        child: CivicFixApp(),
-      ),
-    );
+    await tester.pumpWidget(const ProviderScope(child: CivicFixApp()));
 
     // Let the GoRouter animations settle
     await tester.pumpAndSettle();

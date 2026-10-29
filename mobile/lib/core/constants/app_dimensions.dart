@@ -26,6 +26,9 @@ class AppDimensions {
   static const double inputHeight = 48.0;
 
   // Standard Insets
-  static const EdgeInsets pagePadding = EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0);
+  static const EdgeInsets pagePadding = EdgeInsets.symmetric(
+    horizontal: 20.0,
+    vertical: 16.0,
+  );
   static const EdgeInsets cardPadding = EdgeInsets.all(16.0);
 }

@@ -35,19 +35,27 @@ class ComplaintsState {
       case ComplaintFilter.all:
         return complaints;
       case ComplaintFilter.underReview:
-        return complaints.where((c) => c.status == 'UNDER_REVIEW' || c.status == 'SUBMITTED').toList();
+        return complaints
+            .where((c) => c.status == 'UNDER_REVIEW' || c.status == 'SUBMITTED')
+            .toList();
       case ComplaintFilter.inProgress:
-        return complaints.where((c) => c.status == 'IN_PROGRESS' || c.status == 'ASSIGNED').toList();
+        return complaints
+            .where((c) => c.status == 'IN_PROGRESS' || c.status == 'ASSIGNED')
+            .toList();
       case ComplaintFilter.resolved:
         return complaints.where((c) => c.status == 'RESOLVED').toList();
       case ComplaintFilter.closed:
-        return complaints.where((c) => c.status == 'CLOSED' || c.status == 'REJECTED').toList();
+        return complaints
+            .where((c) => c.status == 'CLOSED' || c.status == 'REJECTED')
+            .toList();
     }
   }
 }
 
 final complaintsNotifierProvider =
-    NotifierProvider<ComplaintsNotifier, ComplaintsState>(ComplaintsNotifier.new);
+    NotifierProvider<ComplaintsNotifier, ComplaintsState>(
+      ComplaintsNotifier.new,
+    );
 
 class ComplaintsNotifier extends Notifier<ComplaintsState> {
   @override
@@ -63,10 +71,7 @@ class ComplaintsNotifier extends Notifier<ComplaintsState> {
     state = state.copyWith(isLoading: true, error: null);
     try {
       // Prepared for Day 8 complaint integration
-      state = state.copyWith(
-        isLoading: false,
-        complaints: const [],
-      );
+      state = state.copyWith(isLoading: false, complaints: const []);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
     }

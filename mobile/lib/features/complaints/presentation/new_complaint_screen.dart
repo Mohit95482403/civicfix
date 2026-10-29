@@ -16,7 +16,9 @@ class NewComplaintScreen extends StatelessWidget {
         title: const Text('Report a Civic Issue'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+          onPressed: () => context.canPop()
+              ? context.pop()
+              : context.go('/citizen/dashboard'),
         ),
       ),
       body: SafeArea(
@@ -74,7 +76,8 @@ class NewComplaintScreen extends StatelessWidget {
               _StepCard(
                 step: '1',
                 title: 'Problem Categorization',
-                description: 'Select from 6 standardized municipal categories (Potholes, Sanitation, Streetlights, Water leaks, Drainage, Infrastructure).',
+                description:
+                    'Select from 6 standardized municipal categories (Potholes, Sanitation, Streetlights, Water leaks, Drainage, Infrastructure).',
                 icon: Icons.category_outlined,
               ),
               const SizedBox(height: AppDimensions.sm),
@@ -82,7 +85,8 @@ class NewComplaintScreen extends StatelessWidget {
               _StepCard(
                 step: '2',
                 title: 'Photographic Proof',
-                description: 'Camera capture with anti-tamper timestamp and GPS coordinates embedded into Supabase Storage.',
+                description:
+                    'Camera capture with anti-tamper timestamp and GPS coordinates embedded into Supabase Storage.',
                 icon: Icons.camera_alt_outlined,
               ),
               const SizedBox(height: AppDimensions.sm),
@@ -90,7 +94,8 @@ class NewComplaintScreen extends StatelessWidget {
               _StepCard(
                 step: '3',
                 title: 'Accurate Geo-Location',
-                description: 'High-precision coordinate capture with automated ward mapping and street reverse geocoding.',
+                description:
+                    'High-precision coordinate capture with automated ward mapping and street reverse geocoding.',
                 icon: Icons.my_location_rounded,
               ),
               const SizedBox(height: AppDimensions.sm),
@@ -98,7 +103,8 @@ class NewComplaintScreen extends StatelessWidget {
               _StepCard(
                 step: '4',
                 title: 'Citizen Reference Code',
-                description: 'Instant generation of tracking codes (e.g., CF-2026-BLR-0042) and assignment to ward dispatch.',
+                description:
+                    'Instant generation of tracking codes (e.g., CF-2026-BLR-0042) and assignment to ward dispatch.',
                 icon: Icons.confirmation_number_outlined,
               ),
 

@@ -51,10 +51,7 @@ class ApiClient {
     return _dio.get<T>(path, queryParameters: queryParameters);
   }
 
-  Future<Response<T>> post<T>(
-    String path, {
-    dynamic data,
-  }) async {
+  Future<Response<T>> post<T>(String path, {dynamic data}) async {
     return _dio.post<T>(path, data: data);
   }
 
@@ -64,14 +61,17 @@ class ApiClient {
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
         return const NetworkException(
-          message: 'Connection timed out. Please check your internet connection.',
+          message:
+              'Connection timed out. Please check your internet connection.',
           code: 'TIMEOUT',
         );
       case DioExceptionType.badResponse:
         final statusCode = error.response?.statusCode;
         final data = error.response?.data;
         String message = 'Server returned an error ($statusCode)';
-        if (data is Map && data['error'] != null && data['error']['message'] != null) {
+        if (data is Map &&
+            data['error'] != null &&
+            data['error']['message'] != null) {
           message = data['error']['message'].toString();
         }
         return ApiException(

@@ -9,7 +9,11 @@ class DashboardData {
   final String? error;
 
   const DashboardData({
-    this.stats = const DashboardStats(totalSubmitted: 0, inProgress: 0, resolved: 0),
+    this.stats = const DashboardStats(
+      totalSubmitted: 0,
+      inProgress: 0,
+      resolved: 0,
+    ),
     this.recentComplaints = const [],
     this.isLoading = false,
     this.error,
@@ -62,10 +66,7 @@ class DashboardNotifier extends Notifier<DashboardData> {
         recentComplaints: const [],
       );
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
