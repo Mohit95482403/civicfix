@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/models/complaint_summary.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../complaints/data/complaints_repository.dart';
 
 class DashboardData {
   final DashboardStats stats;
@@ -53,17 +54,34 @@ class DashboardNotifier extends Notifier<DashboardData> {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      // In Day 7, complaint listing API is preparing for Day 8 implementation.
-      // We initialize with genuine citizen statistics (0/0/0) and empty list,
-      // avoiding fabricating fake numbers.
+      final repository = ref.read(complaintsRepositoryProvider);
+      final complaints = await repository.getMyComplaints();
+
+      final total = complaints.length;
+      final inProgress = complaints
+          .where(
+            (c) =>
+                c.status.toUpperCase() == 'IN_PROGRESS' ||
+                c.status.toUpperCase() == 'ASSIGNED' ||
+                c.status.toUpperCase() == 'UNDER_REVIEW',
+          )
+          .length;
+      final resolved = complaints
+          .where(
+            (c) =>
+                c.status.toUpperCase() == 'RESOLVED' ||
+                c.status.toUpperCase() == 'CLOSED',
+          )
+          .length;
+
       state = state.copyWith(
         isLoading: false,
-        stats: const DashboardStats(
-          totalSubmitted: 0,
-          inProgress: 0,
-          resolved: 0,
+        stats: DashboardStats(
+          totalSubmitted: total,
+          inProgress: inProgress,
+          resolved: resolved,
         ),
-        recentComplaints: const [],
+        recentComplaints: complaints.take(5).toList(),
       );
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());

@@ -1,3 +1,6 @@
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
+
 /// Application Environment Configuration
 /// Encapsulates environment-specific settings (API endpoints, Supabase endpoints).
 /// Sensitive service-role keys are NEVER bundled into mobile builds.
@@ -14,11 +17,21 @@ class EnvConfig {
     this.environment = 'development',
   });
 
+  /// Automatically resolves correct host loopback:
+  /// Web & Desktop -> localhost:5000
+  /// Android Emulator -> 10.0.2.2:5000
+  static String get defaultDevBaseUrl {
+    if (kIsWeb) return 'http://localhost:5000/api/v1';
+    try {
+      if (Platform.isAndroid) return 'http://10.0.2.2:5000/api/v1';
+    } catch (_) {}
+    return 'http://localhost:5000/api/v1';
+  }
+
   /// Default development configuration pointing to local Node.js API Gateway
   factory EnvConfig.development() {
-    return const EnvConfig(
-      apiBaseUrl:
-          'http://10.0.2.2:5000/api/v1', // Android emulator loopback to host
+    return EnvConfig(
+      apiBaseUrl: defaultDevBaseUrl,
       supabaseUrl: 'https://your-project-id.supabase.co',
       supabaseAnonKey: 'your-supabase-anon-key',
       environment: 'development',
@@ -27,20 +40,21 @@ class EnvConfig {
 
   /// Production configuration placeholder (configured via dart-define in CI/CD)
   factory EnvConfig.fromEnvironment() {
-    return const EnvConfig(
-      apiBaseUrl: String.fromEnvironment(
-        'API_BASE_URL',
-        defaultValue: 'http://10.0.2.2:5000/api/v1',
-      ),
-      supabaseUrl: String.fromEnvironment(
+    const definedUrl = String.fromEnvironment('API_BASE_URL');
+    return EnvConfig(
+      apiBaseUrl: definedUrl.isNotEmpty ? definedUrl : defaultDevBaseUrl,
+      supabaseUrl: const String.fromEnvironment(
         'SUPABASE_URL',
         defaultValue: 'https://your-project-id.supabase.co',
       ),
-      supabaseAnonKey: String.fromEnvironment(
+      supabaseAnonKey: const String.fromEnvironment(
         'SUPABASE_ANON_KEY',
         defaultValue: '',
       ),
-      environment: String.fromEnvironment('ENV', defaultValue: 'development'),
+      environment: const String.fromEnvironment(
+        'ENV',
+        defaultValue: 'development',
+      ),
     );
   }
 }

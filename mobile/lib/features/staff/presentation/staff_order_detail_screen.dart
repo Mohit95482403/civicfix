@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_typography.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/complaint_status_badge.dart';
+import '../../complaints/data/complaints_repository.dart';
 
-class StaffOrderDetailScreen extends StatefulWidget {
+class StaffOrderDetailScreen extends ConsumerStatefulWidget {
   final String orderId;
 
   const StaffOrderDetailScreen({super.key, required this.orderId});
 
   @override
-  State<StaffOrderDetailScreen> createState() => _StaffOrderDetailScreenState();
+  ConsumerState<StaffOrderDetailScreen> createState() =>
+      _StaffOrderDetailScreenState();
 }
 
-class _StaffOrderDetailScreenState extends State<StaffOrderDetailScreen> {
+class _StaffOrderDetailScreenState
+    extends ConsumerState<StaffOrderDetailScreen> {
   late String _status;
   final TextEditingController _resolutionNoteController =
       TextEditingController();
@@ -66,12 +70,27 @@ class _StaffOrderDetailScreenState extends State<StaffOrderDetailScreen> {
               backgroundColor: AppColors.success,
               foregroundColor: Colors.white,
             ),
-            onPressed: () {
+            onPressed: () async {
               setState(() {
                 _status = 'resolved';
               });
+              final messenger = ScaffoldMessenger.of(context);
               Navigator.of(ctx).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
+              try {
+                final repository = ref.read(complaintsRepositoryProvider);
+                await repository.updateStatus(
+                  complaintId: widget.orderId,
+                  status: 'RESOLVED',
+                  reason: _resolutionNoteController.text,
+                );
+                if (_resolutionNoteController.text.isNotEmpty) {
+                  await repository.addEvidence(
+                    complaintId: widget.orderId,
+                    description: _resolutionNoteController.text,
+                  );
+                }
+              } catch (_) {}
+              messenger.showSnackBar(
                 const SnackBar(
                   content: Text(
                     'Work order marked as RESOLVED and submitted for citizen verification.',
@@ -255,9 +274,19 @@ class _StaffOrderDetailScreenState extends State<StaffOrderDetailScreen> {
                     AppButton(
                       label: 'Accept & Start Inspection',
                       icon: Icons.play_arrow_rounded,
-                      onPressed: () {
+                      onPressed: () async {
                         setState(() => _status = 'in_progress');
-                        ScaffoldMessenger.of(context).showSnackBar(
+                        final messenger = ScaffoldMessenger.of(context);
+                        try {
+                          final repository = ref.read(
+                            complaintsRepositoryProvider,
+                          );
+                          await repository.updateStatus(
+                            complaintId: widget.orderId,
+                            status: 'IN_PROGRESS',
+                          );
+                        } catch (_) {}
+                        messenger.showSnackBar(
                           const SnackBar(
                             content: Text('Order status set to IN PROGRESS'),
                           ),

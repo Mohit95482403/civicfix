@@ -10,6 +10,7 @@ import { errorHandler } from './middleware/error-handler.js';
 import { healthRoutes } from './routes/health.routes.js';
 import { authRoutes } from './routes/auth.routes.js';
 import { profileRoutes } from './routes/profile.routes.js';
+import { complaintRoutes } from './routes/complaint.routes.js';
 import { apiV1Router } from './routes/index.js';
 
 export function createApp(): Express {
@@ -48,10 +49,11 @@ export function createApp(): Express {
   // 6. Global API Rate Limiting
   app.use('/api', apiRateLimiter);
 
-  // 7. Direct Convenience Routes (/api/health, /api/auth, /api/profile)
+  // 7. Direct Convenience Routes (/api/health, /api/auth, /api/profile, /api/complaints)
   app.use('/api', healthRoutes);
   app.use('/api/auth', authRoutes);
   app.use('/api/profile', profileRoutes);
+  app.use('/api/complaints', complaintRoutes);
 
   // 8. Versioned API Router (/api/v1/*)
   app.use('/api/v1', apiV1Router);

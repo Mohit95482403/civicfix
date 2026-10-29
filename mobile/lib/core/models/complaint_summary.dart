@@ -25,25 +25,40 @@ class ComplaintSummary {
     return ComplaintSummary(
       id: json['id'] as String? ?? '',
       complaintNumber:
+          json['referenceNumber'] as String? ??
+          json['reference_number'] as String? ??
           json['complaint_number'] as String? ??
           json['complaintNumber'] as String? ??
-          'CF-XXXX',
+          'CF-PENDING',
       title: json['title'] as String? ?? 'Civic Issue',
-      category: json['category'] as String? ?? 'General',
-      status: json['status'] as String? ?? 'SUBMITTED',
-      address: json['address'] as String? ?? 'Bengaluru, Karnataka',
+      category:
+          json['categoryName'] as String? ??
+          json['category_name'] as String? ??
+          json['category'] as String? ??
+          'General',
+      status: (json['status'] as String? ?? 'SUBMITTED').toUpperCase(),
+      address:
+          json['addressText'] as String? ??
+          json['address_text'] as String? ??
+          json['address'] as String? ??
+          'Location not specified',
       createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'].toString())
-          : DateTime.now(),
+          ? DateTime.tryParse(json['created_at'].toString()) ?? DateTime.now()
+          : (json['createdAt'] != null
+                ? DateTime.tryParse(json['createdAt'].toString()) ??
+                      DateTime.now()
+                : DateTime.now()),
       imageUrl: json['image_url'] as String? ?? json['imageUrl'] as String?,
-      priority: json['priority'] as String? ?? 'MEDIUM',
+      priority: (json['priority'] as String? ?? 'MEDIUM').toUpperCase(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'complaintNumber': complaintNumber,
       'complaint_number': complaintNumber,
+      'referenceNumber': complaintNumber,
       'title': title,
       'category': category,
       'status': status,

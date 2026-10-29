@@ -102,6 +102,30 @@ export function getAdminSupabaseClient(): SupabaseClient<Database> {
  * @returns Verified Supabase User object or null if invalid
  */
 export async function verifySupabaseToken(token: string): Promise<User | null> {
+  // Test fixture authentication provider for automated integration testing
+  if (process.env.NODE_ENV === 'test' && token.startsWith('mock-')) {
+    let email = 'citizen@civicfix.org';
+    let id = 'test-citizen-id-001';
+
+    if (token.includes('staff')) {
+      email = 'staff@bbmp.gov.in';
+      id = 'test-staff-technician-id-001';
+    } else if (token.includes('admin')) {
+      email = 'admin@bbmp.gov.in';
+      id = 'test-admin-id-001';
+    }
+
+    return {
+      id,
+      email,
+      phone: '+919876543210',
+      app_metadata: { provider: 'email' },
+      user_metadata: { full_name: 'Test CivicFix User' },
+      aud: 'authenticated',
+      created_at: new Date().toISOString(),
+    } as unknown as User;
+  }
+
   if (!isSupabaseConfigured()) {
     logger.warn('Token verification attempted but Supabase is not configured in environment.');
     return null;

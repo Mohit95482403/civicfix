@@ -79,7 +79,7 @@ class HomeDashboardScreen extends ConsumerWidget {
                         Icons.notifications_none_rounded,
                         color: AppColors.textPrimary,
                       ),
-                      onPressed: () => context.push('/notifications'),
+                      onPressed: () => context.push('/citizen/notifications'),
                       tooltip: 'Notifications',
                     ),
                   ],
@@ -232,7 +232,7 @@ class HomeDashboardScreen extends ConsumerWidget {
                         icon: Icons.map_outlined,
                         iconColor: AppColors.primary,
                         label: 'Nearby Issues',
-                        onTap: () => context.push('/nearby'),
+                        onTap: () => context.push('/complaints/nearby'),
                       ),
                     ),
                     const SizedBox(width: AppDimensions.sm),
@@ -241,7 +241,7 @@ class HomeDashboardScreen extends ConsumerWidget {
                         icon: Icons.track_changes_rounded,
                         iconColor: AppColors.tealAccent,
                         label: 'Track Status',
-                        onTap: () => context.push('/complaints'),
+                        onTap: () => context.push('/citizen/complaints'),
                       ),
                     ),
                     const SizedBox(width: AppDimensions.sm),
@@ -270,7 +270,7 @@ class HomeDashboardScreen extends ConsumerWidget {
                 SectionHeader(
                   title: 'My Recent Reports',
                   actionLabel: 'View All',
-                  onActionTap: () => context.push('/complaints'),
+                  onActionTap: () => context.push('/citizen/complaints'),
                 ),
 
                 if (dashboardData.recentComplaints.isEmpty)
@@ -299,7 +299,7 @@ class HomeDashboardScreen extends ConsumerWidget {
                       final item = dashboardData.recentComplaints[index];
                       return AppCard(
                         padding: const EdgeInsets.all(AppDimensions.md),
-                        onTap: () => context.push('/complaints'),
+                        onTap: () => context.push('/citizen/complaints'),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

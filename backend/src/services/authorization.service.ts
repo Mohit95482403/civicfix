@@ -12,6 +12,34 @@ export class AuthorizationService {
     userId: string,
     accessToken: string
   ): Promise<StaffMembershipInfo[]> {
+    if (process.env.NODE_ENV === 'test' && accessToken.startsWith('mock-')) {
+      if (accessToken.includes('admin')) {
+        return [
+          {
+            id: 'mem-test-admin-01',
+            userId,
+            organizationId: '00000000-0000-4000-a000-000000000001',
+            departmentId: null,
+            role: 'ORG_ADMIN',
+            isActive: true,
+          },
+        ];
+      }
+      if (accessToken.includes('staff')) {
+        return [
+          {
+            id: 'mem-test-staff-01',
+            userId,
+            organizationId: '00000000-0000-4000-a000-000000000001',
+            departmentId: '10000000-0000-4000-a000-000000000001',
+            role: 'STAFF',
+            isActive: true,
+          },
+        ];
+      }
+      return [];
+    }
+
     try {
       const client = createUserSupabaseClient(accessToken);
       const { data, error } = await client

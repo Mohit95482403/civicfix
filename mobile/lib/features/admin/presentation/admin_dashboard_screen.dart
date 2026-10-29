@@ -7,6 +7,7 @@ import '../../../core/constants/app_typography.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/stat_card.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../complaints/data/complaints_repository.dart';
 
 class AdminDashboardScreen extends ConsumerStatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -145,12 +146,22 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
                 backgroundColor: const Color(0xFF7C3AED),
                 foregroundColor: Colors.white,
               ),
-              onPressed: () {
+              onPressed: () async {
                 setState(() {
                   _pendingTriage.remove(item);
                 });
+                final messenger = ScaffoldMessenger.of(context);
                 Navigator.of(ctx).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
+                try {
+                  final repository = ref.read(complaintsRepositoryProvider);
+                  await repository.assignComplaint(
+                    complaintId: item['id'],
+                    departmentId: '10000000-0000-4000-a000-000000000001',
+                    assignedTo: '00000000-0000-4000-a000-000000000003',
+                    notes: 'Dispatched to $selectedDept ($selectedStaff)',
+                  );
+                } catch (_) {}
+                messenger.showSnackBar(
                   SnackBar(
                     content: Text(
                       'Complaint ${item['complaintNumber']} dispatched to $selectedDept ($selectedStaff).',

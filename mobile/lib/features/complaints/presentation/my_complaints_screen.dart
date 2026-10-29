@@ -76,65 +76,92 @@ class MyComplaintsScreen extends ConsumerWidget {
 
           // Content View
           Expanded(
-            child: state.filteredComplaints.isEmpty
-                ? EmptyStateWidget(
-                    icon: Icons.assignment_outlined,
-                    title: 'No complaints in this category',
-                    description:
-                        'Issues submitted by you in this status will appear here with live tracking notes.',
-                    buttonLabel: 'Report an Issue',
-                    onButtonPressed: () => context.push('/complaints/new'),
+            child: state.isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(color: AppColors.primary),
                   )
-                : ListView.separated(
-                    padding: const EdgeInsets.all(AppDimensions.base),
-                    itemCount: state.filteredComplaints.length,
-                    separatorBuilder: (_, index) =>
-                        const SizedBox(height: AppDimensions.sm),
-                    itemBuilder: (context, index) {
-                      final item = state.filteredComplaints[index];
-                      return AppCard(
-                        padding: const EdgeInsets.all(AppDimensions.base),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  item.complaintNumber,
-                                  style: AppTypography.bodySmall.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.primary,
-                                  ),
-                                ),
-                                ComplaintStatusBadge(status: item.status),
-                              ],
-                            ),
-                            const SizedBox(height: AppDimensions.xs),
-                            Text(item.title, style: AppTypography.cardHeading),
-                            const SizedBox(height: AppDimensions.xs),
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.location_on_outlined,
-                                  size: 14,
-                                  color: AppColors.textTertiary,
-                                ),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: Text(
-                                    item.address,
-                                    style: AppTypography.bodySmall,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
+                : RefreshIndicator(
+                    color: AppColors.primary,
+                    onRefresh: () async {
+                      await notifier.refresh();
                     },
+                    child: state.filteredComplaints.isEmpty
+                        ? SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            child: SizedBox(
+                              height: 400,
+                              child: EmptyStateWidget(
+                                icon: Icons.assignment_outlined,
+                                title: 'No complaints in this category',
+                                description:
+                                    'Issues submitted by you in this status will appear here with live tracking notes.',
+                                buttonLabel: 'Report an Issue',
+                                onButtonPressed: () =>
+                                    context.push('/complaints/new'),
+                              ),
+                            ),
+                          )
+                        : ListView.separated(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            padding: const EdgeInsets.all(AppDimensions.base),
+                            itemCount: state.filteredComplaints.length,
+                            separatorBuilder: (_, index) =>
+                                const SizedBox(height: AppDimensions.sm),
+                            itemBuilder: (context, index) {
+                              final item = state.filteredComplaints[index];
+                              return AppCard(
+                                padding: const EdgeInsets.all(
+                                  AppDimensions.base,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          item.complaintNumber,
+                                          style: AppTypography.bodySmall
+                                              .copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.primary,
+                                              ),
+                                        ),
+                                        ComplaintStatusBadge(
+                                          status: item.status,
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: AppDimensions.xs),
+                                    Text(
+                                      item.title,
+                                      style: AppTypography.cardHeading,
+                                    ),
+                                    const SizedBox(height: AppDimensions.xs),
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.location_on_outlined,
+                                          size: 14,
+                                          color: AppColors.textTertiary,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Expanded(
+                                          child: Text(
+                                            item.address,
+                                            style: AppTypography.bodySmall,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                   ),
           ),
         ],

@@ -166,6 +166,23 @@ GoRouter createAppRouter([Ref? ref]) {
         name: 'edit-profile',
         builder: (context, state) => const EditProfileScreen(),
       ),
+      // Deep-link convenience aliases
+      GoRoute(
+        path: '/complaints',
+        redirect: (context, state) => '/citizen/complaints',
+      ),
+      GoRoute(
+        path: '/nearby',
+        redirect: (context, state) => '/complaints/nearby',
+      ),
+      GoRoute(
+        path: '/notifications',
+        redirect: (context, state) => '/citizen/notifications',
+      ),
+      GoRoute(
+        path: '/profile',
+        redirect: (context, state) => '/citizen/profile',
+      ),
 
       // 3. Staff Portal (Stateful Shell Route)
       StatefulShellRoute.indexedStack(

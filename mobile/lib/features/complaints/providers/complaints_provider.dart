@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/models/complaint_summary.dart';
+import '../data/complaints_repository.dart';
 
 enum ComplaintFilter { all, underReview, inProgress, resolved, closed }
 
@@ -60,6 +61,7 @@ final complaintsNotifierProvider =
 class ComplaintsNotifier extends Notifier<ComplaintsState> {
   @override
   ComplaintsState build() {
+    Future.microtask(() => loadComplaints());
     return const ComplaintsState();
   }
 
@@ -70,10 +72,15 @@ class ComplaintsNotifier extends Notifier<ComplaintsState> {
   Future<void> loadComplaints() async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      // Prepared for Day 8 complaint integration
-      state = state.copyWith(isLoading: false, complaints: const []);
+      final repository = ref.read(complaintsRepositoryProvider);
+      final list = await repository.getMyComplaints();
+      state = state.copyWith(isLoading: false, complaints: list);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
     }
+  }
+
+  Future<void> refresh() async {
+    await loadComplaints();
   }
 }

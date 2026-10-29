@@ -3,6 +3,8 @@ import { z } from 'zod';
 import { healthRoutes } from './health.routes.js';
 import { authRoutes } from './auth.routes.js';
 import { profileRoutes } from './profile.routes.js';
+import { complaintRoutes } from './complaint.routes.js';
+import { adminRoutes } from './admin.routes.js';
 import { requireAuth } from '../middleware/authenticate.js';
 import {
   requireOrganizationMembership,
@@ -23,6 +25,12 @@ apiV1Router.use('/auth', authRoutes);
 
 // Mount profile routes under /profile
 apiV1Router.use('/profile', profileRoutes);
+
+// Mount complaint routes under /complaints
+apiV1Router.use('/complaints', complaintRoutes);
+
+// Mount admin routes under /admin
+apiV1Router.use('/admin', adminRoutes);
 
 const provisionStaffSchema = z.object({
   email: z.string().email(),
