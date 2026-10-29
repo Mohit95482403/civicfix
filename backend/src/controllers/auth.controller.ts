@@ -1,14 +1,45 @@
 import { Request, Response, NextFunction } from 'express';
 import { ApiResponse } from '../utils/api-response.js';
-import { getDefaultSupabaseClient } from '../config/supabase.js';
-import { isSupabaseConfigured } from '../config/env.js';
-import { BadRequestError, ServiceUnavailableError, UnauthorizedError } from '../utils/app-error.js';
-import type { RegisterBody, LoginBody } from '../validators/auth.validators.js';
+import { AuthService } from '../services/auth.service.js';
+import { UnauthorizedError } from '../utils/app-error.js';
+import type {
+  RegisterBody,
+  LoginBody,
+  ForgotPasswordBody,
+  ResetPasswordBody,
+  RefreshTokenBody,
+} from '../validators/auth.validators.js';
 
 export class AuthController {
   /**
-   * GET /api/v1/auth/me
-   * Returns current authenticated user session, profiles, and staff memberships.
+   * POST /api/auth/register & /api/v1/auth/register
+   * Registers a new citizen account using Supabase Auth.
+   */
+  public static async register(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const result = await AuthService.registerCitizen(req.body as RegisterBody);
+      ApiResponse.created(res, result);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  /**
+   * POST /api/auth/login & /api/v1/auth/login
+   * Authenticates user via Supabase Auth and loads profile & memberships.
+   */
+  public static async login(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const result = await AuthService.login(req.body as LoginBody);
+      ApiResponse.success(res, result);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  /**
+   * GET /api/auth/me & /api/v1/auth/me
+   * Retrieves verified current user session, profile, and organizational memberships.
    */
   public static async getMe(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -16,120 +47,65 @@ export class AuthController {
         throw new UnauthorizedError('Authentication is required.');
       }
 
-      ApiResponse.success(res, {
-        user: req.user,
-        memberships: req.authContext.memberships,
-        isPlatformAdmin: req.authContext.isPlatformAdmin,
-      });
+      const result = await AuthService.getCurrentUser(req.user.id, req.authContext.token);
+      ApiResponse.success(res, result);
     } catch (err) {
       next(err);
     }
   }
 
   /**
-   * POST /api/v1/auth/register
-   * Registers a new citizen account via Supabase Auth.
-   * Auto-triggers database profile creation with safe defaults via trg_on_auth_user_created.
-   */
-  public static async register(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      if (!isSupabaseConfigured()) {
-        throw new ServiceUnavailableError(
-          'Supabase Auth is not configured in this environment. Please configure SUPABASE_URL and SUPABASE_ANON_KEY.'
-        );
-      }
-
-      const { email, password, fullName, phoneNumber, preferredLanguage } = req.body as RegisterBody;
-      const supabase = getDefaultSupabaseClient();
-
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-            phone_number: phoneNumber,
-            preferred_language: preferredLanguage,
-          },
-        },
-      });
-
-      if (error) {
-        throw new BadRequestError(error.message);
-      }
-
-      ApiResponse.created(res, {
-        user: {
-          id: data.user?.id,
-          email: data.user?.email,
-          createdAt: data.user?.created_at,
-        },
-        session: data.session
-          ? {
-              accessToken: data.session.access_token,
-              expiresIn: data.session.expires_in,
-              tokenType: data.session.token_type,
-            }
-          : null,
-        message: data.session
-          ? 'Registration successful.'
-          : 'Registration initiated. Please check your email to confirm your account.',
-      });
-    } catch (err) {
-      next(err);
-    }
-  }
-
-  /**
-   * POST /api/v1/auth/login
-   * Authenticates user with Supabase Auth and returns JWT access token.
-   */
-  public static async login(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      if (!isSupabaseConfigured()) {
-        throw new ServiceUnavailableError(
-          'Supabase Auth is not configured in this environment. Please configure SUPABASE_URL and SUPABASE_ANON_KEY.'
-        );
-      }
-
-      const { email, password } = req.body as LoginBody;
-      const supabase = getDefaultSupabaseClient();
-
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error || !data.session) {
-        throw new UnauthorizedError('Invalid email or password.');
-      }
-
-      ApiResponse.success(res, {
-        user: {
-          id: data.user.id,
-          email: data.user.email,
-        },
-        token: {
-          accessToken: data.session.access_token,
-          refreshToken: data.session.refresh_token,
-          expiresIn: data.session.expires_in,
-          tokenType: data.session.token_type,
-        },
-      });
-    } catch (err) {
-      next(err);
-    }
-  }
-
-  /**
-   * POST /api/v1/auth/logout
-   * Invalidates authenticated user session.
+   * POST /api/auth/logout & /api/v1/auth/logout
+   * Handles user logout. Client must discard local access and refresh tokens.
    */
   public static async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       ApiResponse.success(res, {
-        message: 'Successfully logged out.',
+        message: 'Successfully logged out. Client session has been cleared.',
       });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  /**
+   * POST /api/auth/forgot-password & /api/v1/auth/forgot-password
+   * Sends password reset email instructions via Supabase Auth.
+   */
+  public static async forgotPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const result = await AuthService.forgotPassword(req.body as ForgotPasswordBody);
+      ApiResponse.success(res, result);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  /**
+   * POST /api/auth/reset-password & /api/v1/auth/reset-password
+   * Updates password using the authenticated recovery token.
+   */
+  public static async resetPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      if (!req.authContext?.token) {
+        throw new UnauthorizedError('Valid recovery token required in Authorization header.');
+      }
+
+      const result = await AuthService.resetPassword(req.authContext.token, req.body as ResetPasswordBody);
+      ApiResponse.success(res, result);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  /**
+   * POST /api/auth/refresh & /api/v1/auth/refresh
+   * Refreshes user session using a valid refresh token.
+   */
+  public static async refreshSession(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const result = await AuthService.refreshSession(req.body as RefreshTokenBody);
+      ApiResponse.success(res, result);
     } catch (err) {
       next(err);
     }

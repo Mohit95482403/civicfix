@@ -8,6 +8,8 @@ import { apiRateLimiter } from './middleware/rate-limit.js';
 import { notFoundHandler } from './middleware/not-found.js';
 import { errorHandler } from './middleware/error-handler.js';
 import { healthRoutes } from './routes/health.routes.js';
+import { authRoutes } from './routes/auth.routes.js';
+import { profileRoutes } from './routes/profile.routes.js';
 import { apiV1Router } from './routes/index.js';
 
 export function createApp(): Express {
@@ -46,10 +48,12 @@ export function createApp(): Express {
   // 6. Global API Rate Limiting
   app.use('/api', apiRateLimiter);
 
-  // 7. Direct Health Endpoints (Convenience Route: /api/health and /api/health/ready)
+  // 7. Direct Convenience Routes (/api/health, /api/auth, /api/profile)
   app.use('/api', healthRoutes);
+  app.use('/api/auth', authRoutes);
+  app.use('/api/profile', profileRoutes);
 
-  // 8. Versioned API Router (/api/v1)
+  // 8. Versioned API Router (/api/v1/*)
   app.use('/api/v1', apiV1Router);
 
   // 9. 404 Catch-All Handler

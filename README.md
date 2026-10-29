@@ -141,11 +141,12 @@ All architectural, system, and development specifications are organized within t
 22. **[Database Migrations Guide (DATABASE_MIGRATIONS.md)](docs/DATABASE_MIGRATIONS.md):** Migration naming standards, execution sequence, CLI / Dashboard execution, and rollback strategies.
 23. **[Database Testing & Verification (DATABASE_TESTING.md)](docs/DATABASE_TESTING.md):** Data integrity test cases, security boundary test scenarios, static analysis findings, and verification script instructions.
 
-### Backend Architecture, Security & Authentication (Day 5)
-24. **[Authentication Specification (AUTHENTICATION.md)](docs/AUTHENTICATION.md):** Supabase Auth JWT verification, Bearer scheme extraction, anti-spoofing guarantees, and session lifecycle.
-25. **[Authorization Specification (AUTHORIZATION.md)](docs/AUTHORIZATION.md):** Role hierarchy, multi-tenant organization isolation guards, and internal notes shielding.
-26. **[API Response & Error Conventions (API_ERROR_CONVENTIONS.md)](docs/API_ERROR_CONVENTIONS.md):** Standard JSON envelopes, HTTP status codes, and Request ID tracing.
-27. **[Backend Security & Hardening (BACKEND_SECURITY.md)](docs/BACKEND_SECURITY.md):** Defense-in-depth, Helmet, CORS allowlisting, rate limiting, and dual database access patterns.
+### Authentication, Profiles & Session Management (Day 6)
+28. **[Authentication Specification (AUTHENTICATION.md)](docs/AUTHENTICATION.md):** Supabase Auth integration, registration, login, logout, password recovery, session refresh, and token extraction.
+29. **[Authorization Specification (AUTHORIZATION.md)](docs/AUTHORIZATION.md):** 5-tier role hierarchy, anti-privilege escalation guards, administrative staff provisioning, and multi-tenant isolation.
+30. **[Supabase Setup & Configuration Guide (SUPABASE_SETUP.md)](docs/SUPABASE_SETUP.md):** Dashboard auth settings, email confirmation, deep linking redirect URLs, and database trigger sync.
+31. **[Profile Management Specification (PROFILE_MANAGEMENT.md)](docs/PROFILE_MANAGEMENT.md):** Profile schema, 1:1 foreign key linkage, allowed editable fields, and self-healing recovery fallback.
+32. **[Authentication & Authorization Testing Suite (AUTH_TESTING.md)](docs/AUTH_TESTING.md):** 54 automated Vitest tests, unit & integration test coverage matrix, and cURL manual test scripts.
 
 ---
 
@@ -153,18 +154,18 @@ All architectural, system, and development specifications are organized within t
 
 ```
 civicfix/
-├── mobile/                     # Flutter citizen app (Riverpod 3, GoRouter 18, Dio 5)
-├── staff-portal/               # React 19 + Vite 6 staff portal (Tailwind CSS, TS)
-├── admin-portal/               # React 19 + Vite 6 admin portal (Tailwind CSS, TS)
+├── mobile/                     # Flutter citizen app (Riverpod 3, GoRouter 18, Dio 5, Auth flow)
+├── staff-portal/               # React 19 + Vite 6 staff portal (Auth Context, Protected Routes)
+├── admin-portal/               # React 19 + Vite 6 admin portal (Admin Auth Guard, Role Check)
 ├── backend/                    # Node 20+ Express REST API (TypeScript 5, Supabase Auth, Zod)
 │   ├── src/                    # Controllers, middleware, routes, services, validators, utils
-│   └── tests/                  # 30 automated Vitest unit & integration tests
+│   └── tests/                  # 54 automated Vitest unit & integration tests (100% passing)
 ├── database/                   # Migrations, seed scripts, and verification tests
 │   ├── migrations/             # 9 ordered PostgreSQL DDL scripts (001 to 009)
 │   ├── seeds/                  # Pilot municipal seeds (BBMP, PMC) and sample tickets
 │   └── tests/                  # Executable schema verification script
 ├── design-prototype/           # Day 2 interactive prototype (React 19 + Vite)
-├── docs/                       # 27 master architecture & engineering specifications
+├── docs/                       # 32 master architecture & engineering specifications
 └── package.json                # Root orchestration scripts
 ```
 
@@ -172,8 +173,8 @@ civicfix/
 
 ## 7. Current Status & Next Steps
 
-* **Current Milestone:** **Day 5 Complete** (Secure Node.js + Express + TypeScript Backend, Supabase Auth, Authorization Middleware & API Foundation).
-* **Next Milestone:** **Day 6: Authentication Flows and Secure Account Management**.
+* **Current Milestone:** **Day 6 Complete** (Complete Authentication, Registration, Login, Profiles & Session Management).
+* **Next Milestone:** **Day 7: Flutter Citizen Mobile App Foundation, Bottom Navigation & Architecture**.
 
 
 

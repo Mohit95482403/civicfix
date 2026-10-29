@@ -32,8 +32,10 @@ export async function apiClient<T>(
 ): Promise<ApiResponse<T>> {
   const url = `${config.apiBaseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
 
+  const token = localStorage.getItem('civicfix_admin_token');
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...(options.headers as Record<string, string>),
   };
 

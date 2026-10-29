@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../app/theme/app_colors.dart';
+import '../../auth/providers/auth_provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authNotifierProvider);
+    final isAuthenticated = authState.status == AuthStatus.authenticated;
+    final user = authState.user;
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -32,6 +39,31 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
         actions: [
+          if (isAuthenticated && user != null) ...[
+            Center(
+              child: Text(
+                user.fullName.split(' ').first,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.logout_rounded, size: 20),
+              tooltip: 'Sign Out',
+              onPressed: () {
+                ref.read(authNotifierProvider.notifier).logout();
+              },
+            ),
+          ] else ...[
+            TextButton.icon(
+              icon: const Icon(Icons.login_rounded, size: 18),
+              label: const Text('Sign In'),
+              onPressed: () => context.push('/login'),
+            ),
+          ],
           IconButton(
             icon: const Icon(Icons.notifications_none_rounded),
             onPressed: () {},

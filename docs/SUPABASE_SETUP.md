@@ -1,75 +1,109 @@
-# CivicFix Supabase Architecture & Setup Guide
+# CivicFix Supabase Setup & Configuration Guide
+
 **Document Version:** 1.0.0  
-**Phase:** Day 3: Development Environment Setup and Project Foundation  
-**Status:** Approved Baseline  
+**Phase:** Day 6 — Complete Authentication, Registration, Login, Profiles & Session Management  
+**Status:** Approved Reference  
 
 ---
 
-## 1. Overview & Architectural Role
+## 1. Supabase Dashboard Configuration
 
-Supabase serves as the managed backend infrastructure layer for CivicFix, providing:
-1. **Managed PostgreSQL 15+** with the `postgis` spatial extension for geospatial coordinates.
-2. **Supabase Auth** for citizen, staff, supervisor, and administrator JWT authentication.
-3. **Supabase Storage** for secure storage of citizen hazard photos and mandatory repair proof evidence.
-4. **PostgreSQL Row Level Security (RLS)** as defense-in-depth authorization.
+To enable complete authentication and email verification for CivicFix, configure the following settings in your Supabase Project Dashboard:
 
-> **Implementation Roadmap:** The database schema migrations and Supabase tables are scheduled for **Day 4**. Authentication integration is scheduled for **Day 6**.
+### A. Email Authentication & Verification
+1. Navigate to: **Authentication** > **Providers** > **Email**.
+2. **Enable Email Provider:** Set to `ON`.
+3. **Confirm Email:**
+   - For **Production:** Set to `ON` (Citizens must click the email verification link before their session is considered verified).
+   - For **Local Development/Testing:** You may temporarily toggle to `OFF` if testing without an external SMTP server.
+4. **Secure Password Minimum Length:** Set to at least `8` characters.
 
----
+### B. Redirect URLs & Deep Linking
+1. Navigate to: **Authentication** > **URL Configuration**.
+2. **Site URL:** Set to your primary frontend application URL:
+   - Development: `http://localhost:5173`
+   - Production: `https://app.civicfix.in`
+3. **Additional Redirect URLs:** Add the callback endpoints for password recovery and email confirmations:
+   - Citizen Web / Mobile Deep Links: `civicfix://auth/callback`
+   - Staff Portal: `http://localhost:5173/auth/callback`
+   - Admin Portal: `http://localhost:5174/auth/callback`
+   - Password Recovery: `http://localhost:5173/reset-password`
 
-## 2. Step-by-Step Supabase Project Creation
-
-When setting up your Supabase project (scheduled for Day 4):
-
-1. **Create Account / Project:**
-   * Sign in to [supabase.com](https://supabase.com).
-   * Click **New Project** in your organization dashboard.
-   * **Project Name:** `civicfix-production` (or `civicfix-dev`).
-   * **Database Password:** Generate a secure, 24+ character password and store it safely in your password manager.
-   * **Region:** Select the region closest to your target municipal deployment (e.g., `ap-south-1` Mumbai for India).
-   * **Pricing Plan:** Free tier is fully sufficient for development and prototype phases.
-
-2. **Locate Credentials in Supabase Dashboard:**
-   * Navigate to **Project Settings** → **API**.
-   * **Project URL:** Found under `Project URL` (e.g. `https://your-project-id.supabase.co`).
-   * **Anon Public Key:** Found under `Project API keys` → `anon / public`. This is safe for client applications (`staff-portal`, `admin-portal`, `mobile`).
-   * **Service Role Secret Key:** Found under `Project API keys` → `service_role / secret`.
-     * ⚠️ **CRITICAL SECURITY REQUIREMENT:** This key bypasses all Row Level Security.
-     * Place this key **ONLY** in `backend/.env` under `SUPABASE_SECRET_KEY`.
-     * **NEVER** expose this key in client web applications, Flutter code, or Git commits.
+### C. Custom SMTP Configuration
+By default, Supabase sends up to 30 emails per hour on the free tier. For production or staging:
+1. Navigate to: **Project Settings** > **Authentication** > **SMTP Settings**.
+2. Configure your custom transactional SMTP provider (e.g., AWS SES, SendGrid, Resend, or Brevo).
 
 ---
 
-## 3. Storage Bucket Configuration (Day 4 Scope)
+## 2. Environment Variables Specification
 
-CivicFix requires two private S3-compatible cloud storage buckets:
+The CivicFix backend requires the following configuration in `backend/.env`:
 
-| Bucket Name | Access Level | Permitted File Types | Max File Size | Purpose |
-| :--- | :--- | :--- | :--- | :--- |
-| `complaint-photos` | Authenticated Read / Write via API | JPEG, PNG, WebP | 10 MB | Citizen initial hazard evidence photos |
-| `resolution-evidence` | Staff / Admin Read / Write via API | JPEG, PNG, WebP | 10 MB | Technician repair proof photos |
+```env
+# Server Port & Environment
+PORT=5000
+NODE_ENV=development
 
-Buckets are configured as **private**. Files are uploaded and retrieved using signed time-limited URLs generated exclusively by the Node.js backend.
+# Supabase Auth & Database Keys
+# Publicly safe project URL
+SUPABASE_URL=https://your-project-id.supabase.co
+
+# Client-facing anonymous/publishable key
+SUPABASE_PUBLISHABLE_KEY=sbp_xxxxxxxxxxxxxxxxxxxx
+
+# Server-Only Privileged Service Role Key (NEVER commit to version control or bundle in frontend)
+SUPABASE_SERVICE_ROLE_KEY=eyJh...service-role-secret...
+
+# Allowed Frontend Origins (CORS protection)
+FRONTEND_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:5174,http://localhost:5175
+```
+
+> [!CAUTION]
+> The `SUPABASE_SERVICE_ROLE_KEY` bypasses all Row Level Security (RLS) policies. It must **only** be placed in server-side environment variables and never exposed to the Flutter mobile app or React frontend bundles.
 
 ---
 
-## 4. Row Level Security (RLS) Strategy
+## 3. Database Triggers & Profile Synchronization
 
-PostgreSQL Row Level Security ensures data isolation even if an application bug occurs:
-* `profiles`: Users can view public profiles; only the profile owner can update their own personal info.
-* `complaints`: Public citizens can read verified and non-sensitive complaints in their city; only creator or assigned staff can modify status.
-* `complaint_assignments`: Field staff can only read work orders assigned to their department or user ID.
-* `audit_logs`: Append-only table. No user (including administrators) can update or delete audit records.
+When a user registers via Supabase Auth (`auth.users`), the PostgreSQL database trigger automatically synchronizes their profile in `public.profiles`:
 
----
+```sql
+-- Trigger Definition from Day 4 Migration 20261028000001_core_schema.sql
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.profiles (
+    id,
+    email,
+    full_name,
+    phone_number,
+    is_active,
+    created_at,
+    updated_at
+  )
+  VALUES (
+    NEW.id,
+    NEW.email,
+    COALESCE(NEW.raw_user_meta_data->>'full_name', ''),
+    NEW.raw_user_meta_data->>'phone',
+    true,
+    NOW(),
+    NOW()
+  )
+  ON CONFLICT (id) DO NOTHING;
 
-## 5. Migration Execution Strategy
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
-Migrations are managed as versioned SQL scripts in `database/migrations/`:
-* `001_extensions_and_types.sql`: Enables `uuid-ossp` and `postgis`, creates custom ENUMs.
-* `002_organizations_and_departments.sql`: Scoping tables.
-* `003_profiles_and_roles.sql`: User tables linked to `auth.users`.
-* `004_categories_and_complaints.sql`: Incident management tables.
-* `005_rls_policies.sql`: Complete PostgreSQL Row Level Security rules.
+CREATE TRIGGER trg_on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+```
 
-Execution of these scripts will be performed on **Day 4**.
+### Self-Healing Profile Recovery Fallback
+If for any reason the trigger is delayed or was not executed prior to the user's initial login, the CivicFix backend service (`ProfileService.getProfile`) automatically initiates self-healing fallback:
+1. Validates that the user's identity exists in `auth.users`.
+2. Automatically inserts the corresponding `public.profiles` record using the verified auth metadata.
+3. Sets default role to `citizen` and ensures the user is immediately able to interact with the platform.

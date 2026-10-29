@@ -1,11 +1,21 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { AdminLayout } from '../components/layout/AdminLayout';
 import { AdminDashboard } from '../features/dashboard/AdminDashboard';
+import { AdminLoginPage } from '../features/auth/AdminLoginPage';
+import { AdminProtectedRoute } from '../components/auth/AdminProtectedRoute';
 
 export const router = createBrowserRouter([
   {
+    path: '/login',
+    element: <AdminLoginPage />,
+  },
+  {
     path: '/',
-    element: <AdminLayout />,
+    element: (
+      <AdminProtectedRoute>
+        <AdminLayout />
+      </AdminProtectedRoute>
+    ),
     children: [
       {
         index: true,

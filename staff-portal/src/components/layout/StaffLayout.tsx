@@ -4,10 +4,12 @@ import {
   Wrench, CheckCircle2, Clock, AlertTriangle, 
   Menu, X, Bell, User, LogOut, HardHat, FileText 
 } from 'lucide-react';
+import { useAuth } from '../../lib/auth/AuthContext';
 
 export function StaffLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
+  const { user, memberships, logout } = useAuth();
 
   const navItems = [
     { path: '/', label: 'Assigned Work Orders', icon: Wrench },
@@ -47,24 +49,35 @@ export function StaffLayout() {
           </div>
         </div>
 
-        {/* User Identity & Notification Bell */}
+        {/* User Identity, Logout & Notification Bell */}
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex items-center gap-2.5 bg-slate-50 px-3 py-1.5 rounded-full border border-slate-200">
-            <div className="w-7 h-7 rounded-full bg-primary-light text-primary flex items-center justify-center text-xs font-bold">
-              RK
+            <div className="w-7 h-7 rounded-full bg-primary-light text-primary flex items-center justify-center text-xs font-bold uppercase">
+              {user?.fullName
+                ? user.fullName
+                    .split(' ')
+                    .map((n) => n[0])
+                    .slice(0, 2)
+                    .join('')
+                : 'ST'}
             </div>
             <div className="text-left text-xs">
-              <div className="font-semibold text-brandText-primary">Ramesh Kumar</div>
-              <div className="text-[10px] text-brandText-secondary">Roads & Infrastructure</div>
+              <div className="font-semibold text-brandText-primary">
+                {user?.fullName || 'Technician'}
+              </div>
+              <div className="text-[10px] text-brandText-secondary capitalize">
+                {memberships[0]?.departmentName || user?.role?.replace('_', ' ') || 'Field Operations'}
+              </div>
             </div>
           </div>
 
-          <button 
-            className="p-2 text-brandText-secondary hover:text-brandText-primary rounded-full hover:bg-surface-hover relative"
-            title="Notifications"
+          <button
+            onClick={() => logout()}
+            className="p-2 text-brandText-secondary hover:text-semantic-error rounded-full hover:bg-red-50 transition-colors"
+            title="Sign Out"
+            aria-label="Sign Out"
           >
-            <Bell size={18} />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-semantic-error rounded-full" />
+            <LogOut size={18} />
           </button>
         </div>
       </header>

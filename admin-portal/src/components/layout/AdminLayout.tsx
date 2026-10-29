@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { 
   Building2, Users, AlertTriangle, Layers, Clock, 
-  History, Settings, Menu, X, Bell, UserCheck, Shield 
+  History, Settings, Menu, X, Bell, UserCheck, Shield, LogOut 
 } from 'lucide-react';
+import { useAuth } from '../../lib/auth/AuthContext';
 
 export function AdminLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
+  const { user, memberships, logout } = useAuth();
 
   const navItems = [
     { path: '/', label: 'Executive Dashboard', icon: Layers },
@@ -48,24 +50,35 @@ export function AdminLayout() {
           </div>
         </div>
 
-        {/* Admin Profile & Notifications */}
+        {/* Admin Profile, Logout & System Alerts */}
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex items-center gap-2.5 bg-slate-50 px-3 py-1.5 rounded-full border border-slate-200">
-            <div className="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">
-              AV
+            <div className="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold uppercase">
+              {user?.fullName
+                ? user.fullName
+                    .split(' ')
+                    .map((n) => n[0])
+                    .slice(0, 2)
+                    .join('')
+                : 'AD'}
             </div>
             <div className="text-left text-xs">
-              <div className="font-semibold text-brandText-primary">Anand Verma</div>
-              <div className="text-[10px] text-brandText-secondary">City Administrator</div>
+              <div className="font-semibold text-brandText-primary">
+                {user?.fullName || 'Administrator'}
+              </div>
+              <div className="text-[10px] text-brandText-secondary capitalize">
+                {user?.role?.replace('_', ' ') || 'City Administrator'}
+              </div>
             </div>
           </div>
 
-          <button 
-            className="p-2 text-brandText-secondary hover:text-brandText-primary rounded-full hover:bg-surface-hover relative"
-            title="System Alerts"
+          <button
+            onClick={() => logout()}
+            className="p-2 text-brandText-secondary hover:text-semantic-error rounded-full hover:bg-red-50 transition-colors"
+            title="Sign Out"
+            aria-label="Sign Out"
           >
-            <Bell size={18} />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-semantic-warning rounded-full" />
+            <LogOut size={18} />
           </button>
         </div>
       </header>

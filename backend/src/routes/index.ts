@@ -1,21 +1,61 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
+import { z } from 'zod';
 import { healthRoutes } from './health.routes.js';
 import { authRoutes } from './auth.routes.js';
+import { profileRoutes } from './profile.routes.js';
 import { requireAuth } from '../middleware/authenticate.js';
-import { requireOrganizationMembership, requirePlatformAdministrator } from '../middleware/authorize.js';
+import {
+  requireOrganizationMembership,
+  requireOrganizationRole,
+  requirePlatformAdministrator,
+} from '../middleware/authorize.js';
+import { validateRequest } from '../middleware/validate-request.js';
+import { StaffProvisioningService } from '../services/staff-provisioning.service.js';
 import { ApiResponse } from '../utils/api-response.js';
 
 const apiV1Router = Router();
 
-// Mount public health and readiness routes under /api/v1
+// Mount public health and readiness routes
 apiV1Router.use('/', healthRoutes);
 
-// Mount authentication foundation routes under /api/v1/auth
+// Mount authentication routes under /auth
 apiV1Router.use('/auth', authRoutes);
+
+// Mount profile routes under /profile
+apiV1Router.use('/profile', profileRoutes);
+
+const provisionStaffSchema = z.object({
+  email: z.string().email(),
+  fullName: z.string().min(2).max(120),
+  role: z.enum(['STAFF', 'SUPERVISOR']),
+  departmentId: z.string().uuid().nullable().optional(),
+});
+
+/**
+ * POST /api/v1/organizations/:orgId/staff/provision
+ * Authorized Org Admin or Platform Admin provisions staff or supervisor accounts.
+ */
+apiV1Router.post(
+  '/organizations/:orgId/staff/provision',
+  requireAuth,
+  requireOrganizationRole(['ORG_ADMIN'], 'orgId'),
+  validateRequest({ body: provisionStaffSchema }),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await StaffProvisioningService.provisionStaff(
+        req.params.orgId,
+        req.body,
+        req.user!.id
+      );
+      ApiResponse.created(res, result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 /**
  * Organization Boundary Verification Route.
- * Verifies that the authenticated actor holds active membership in the target organization.
  */
 apiV1Router.get(
   '/organizations/:orgId/verify-access',
@@ -32,7 +72,6 @@ apiV1Router.get(
 
 /**
  * Platform Governance Verification Route.
- * Verifies that the authenticated actor holds platform superuser clearance.
  */
 apiV1Router.get(
   '/admin/verify-platform-access',

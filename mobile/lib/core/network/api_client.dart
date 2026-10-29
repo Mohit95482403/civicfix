@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import '../config/env_config.dart';
 import '../errors/app_exception.dart';
+import 'auth_service.dart';
 
 /// Reusable HTTP API Client powered by Dio
 class ApiClient {
@@ -23,7 +24,10 @@ class ApiClient {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
-          // Future Auth Interceptor: Attach Supabase JWT Bearer token here
+          final token = AuthService.accessToken;
+          if (token != null && !options.headers.containsKey('Authorization')) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
           return handler.next(options);
         },
         onError: (DioException error, handler) {

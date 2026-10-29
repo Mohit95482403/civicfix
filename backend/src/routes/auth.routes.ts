@@ -3,13 +3,19 @@ import { AuthController } from '../controllers/auth.controller.js';
 import { requireAuth } from '../middleware/authenticate.js';
 import { validateRequest } from '../middleware/validate-request.js';
 import { authRateLimiter } from '../middleware/rate-limit.js';
-import { registerBodySchema, loginBodySchema } from '../validators/auth.validators.js';
+import {
+  registerBodySchema,
+  loginBodySchema,
+  forgotPasswordBodySchema,
+  resetPasswordBodySchema,
+  refreshTokenBodySchema,
+} from '../validators/auth.validators.js';
 
 const router = Router();
 
 /**
- * POST /api/v1/auth/register
- * Public registration for citizens.
+ * POST /register
+ * Public citizen registration.
  */
 router.post(
   '/register',
@@ -19,8 +25,8 @@ router.post(
 );
 
 /**
- * POST /api/v1/auth/login
- * Public authentication for citizens, staff, and administrators.
+ * POST /login
+ * Public authentication for citizens and municipal staff.
  */
 router.post(
   '/login',
@@ -30,15 +36,48 @@ router.post(
 );
 
 /**
- * POST /api/v1/auth/logout
- * Terminates authenticated session.
+ * GET /me
+ * Authenticated user profile and membership retrieval.
+ */
+router.get('/me', requireAuth, AuthController.getMe);
+
+/**
+ * POST /logout
+ * Session logout endpoint.
  */
 router.post('/logout', requireAuth, AuthController.logout);
 
 /**
- * GET /api/v1/auth/me
- * Retrieves current authenticated user profile, staff memberships, and permissions.
+ * POST /forgot-password
+ * Password recovery request.
  */
-router.get('/me', requireAuth, AuthController.getMe);
+router.post(
+  '/forgot-password',
+  authRateLimiter,
+  validateRequest({ body: forgotPasswordBodySchema }),
+  AuthController.forgotPassword
+);
+
+/**
+ * POST /reset-password
+ * Password reset execution via recovery token.
+ */
+router.post(
+  '/reset-password',
+  requireAuth,
+  validateRequest({ body: resetPasswordBodySchema }),
+  AuthController.resetPassword
+);
+
+/**
+ * POST /refresh
+ * Token refresh endpoint.
+ */
+router.post(
+  '/refresh',
+  authRateLimiter,
+  validateRequest({ body: refreshTokenBodySchema }),
+  AuthController.refreshSession
+);
 
 export const authRoutes = router;
